@@ -30,14 +30,14 @@ export default function StressTestMethodTab({ onContinue, onCreated }: Props) {
   const handleContinue = async () => {
     if (!selectedMethod || !selectedScenario) return;
 
-    // const payload = {
-    //   analysis_method: [selectedMethod], // backend expects array
-    //   economic_scenario: selectedScenario,
-    // };
+    const payload = {
+      analysis_method: [selectedMethod], // backend expects array
+      economic_scenario: selectedScenario,
+    };
 
-    // const res = await createOrder(payload);
+    const res = await createOrder(payload);
 
-    // onCreated(res.order_id);
+    onCreated(res.order_id);
     onContinue();
   };
   const isAllInputFilled = selectedMethod !== null && selectedScenario !== null;

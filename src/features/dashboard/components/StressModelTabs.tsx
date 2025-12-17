@@ -65,22 +65,13 @@ export default function StressModelTabs() {
         />
       )}
 
-      {/* {currentStep === 1 && orderId && (
+      {currentStep === 1 && orderId && (
         <InputDataTab
           orderId={orderId}
           onContinue={handleFileDataContinue}
           onBack={prevStep}
         />
-      )} */}
-
-      {currentStep === 1 && (
-        <InputDataTab
-          // orderId={orderId}
-          onContinue={handleFileDataContinue}
-          onBack={prevStep}
-        />
       )}
-
 
 
       {currentStep === 2 && (

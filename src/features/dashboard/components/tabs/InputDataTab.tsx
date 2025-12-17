@@ -12,36 +12,36 @@ import { uploadInputData } from "@/api/orders";
 
 
 type Props = {
-  // orderId: number;
+  orderId: number;
   onContinue: (fileColumns: { macroeconomic: string[] }) => void;
   onBack: () => void;
 };
 
 
-export default function InputDataTab({ onContinue, onBack }: Props) {
+export default function InputDataTab({ orderId,onContinue, onBack }: Props) {
   const [timeHorizon, setTimeHorizon] = useState<string>("yearly");
   const { files, handleFileSelect, fileColumns } = useFileUpload();
 
   const handleContinue = async () => {
-    // if (!files.stressTest || !files.macroeconomic) {
-    //   alert("Please upload both files");
-    //   return;
-    // }
+    if (!files.stressTest || !files.macroeconomic) {
+      alert("Please upload both files");
+      return;
+    }
 
-    // try {
-    //   await uploadInputData(orderId, {
-    //     time_horizon: timeHorizon,
-    //     stressTestingFile: files.stressTest,
-    //     macroFile: files.macroeconomic,
-    //   });
+    try {
+      await uploadInputData(orderId, {
+        time_horizon: timeHorizon,
+        stressTestingFile: files.stressTest,
+        macroFile: files.macroeconomic,
+      });
 
       // hanya kirim kolom macro ke step berikutnya
       onContinue(fileColumns);
 
-    // } catch (error) {
-    //   console.error(error);
-    //   alert("Failed to upload data");
-    // }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to upload data");
+    }
   };
 
 
