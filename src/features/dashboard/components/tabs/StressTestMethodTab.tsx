@@ -1,20 +1,29 @@
 import { useState } from 'react';
 import { Section, MethodCard, ContinueButton, ScenarioTypeCard } from '../common';
 import { METHOD_OPTIONS, ECONOMIC_SCENARIOS } from './data/stressTestConfig';
-import { createOrder } from "@/api/orders";
+import { OrdersAPI } from "@/api/orders.api";
+import { useOrderStore } from "@/stores/useOrderStore";
 
 export type ScenarioType = "static" | "dynamic";
 export type AnalysisMethod = "Scenario Analysis" | "Sensitivity Analysis" | "Comprehensive Run";
 
-type Props = {
-  onContinue: () => void;
-  onCreated: (orderId: number) => void;
-};
+// type Props = {
+//   onContinue: () => void;
+//   onCreated: (orderId: number) => void;
+// };
 
 
-export default function StressTestMethodTab({ onContinue, onCreated }: Props) {
-  const [selectedScenario, setSelectedScenario] = useState<ScenarioType | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<AnalysisMethod | null>(null);
+export default function StressTestMethodTab() {
+  const { orderId, setOrderId, nextStep, savePageData, page1 } = useOrderStore();
+
+  const [selectedScenario, setSelectedScenario] = useState(
+    page1?.economic_scenario ?? null
+  );
+
+  const [selectedMethod, setSelectedMethod] = useState(
+    page1?.analysis_method?.[0] ?? null
+  );
+
 
   const handleScenarioChange = (value: ScenarioType) => {
     setSelectedScenario(value);
@@ -35,10 +44,12 @@ export default function StressTestMethodTab({ onContinue, onCreated }: Props) {
       economic_scenario: selectedScenario,
     };
 
-    const res = await createOrder(payload);
-
-    onCreated(res.order_id);
-    onContinue();
+    if (!orderId) {
+    const order = await OrdersAPI.createOrder(payload);
+    setOrderId(order.order_id);
+  }
+    savePageData(1, payload);
+    nextStep();
   };
   const isAllInputFilled = selectedMethod !== null && selectedScenario !== null;
 

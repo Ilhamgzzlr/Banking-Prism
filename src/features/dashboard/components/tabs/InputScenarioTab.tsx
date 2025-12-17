@@ -1,6 +1,9 @@
 import { Section, ScenarioTypeCard, ContinueButton, ScenarioRenderer, BackButton } from "../common";
 import { useScenarioSelection } from "./hooks/useScenarioSelection";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useOrderStore } from "@/stores/useOrderStore";
+import { OrdersAPI } from "@/api/orders.api";
+
 
 type Props = {
   onContinue: () => void;
@@ -8,30 +11,110 @@ type Props = {
 };
 
 
-export default function InputScenarioTab({ onContinue, onBack }: Props) {
+export default function InputScenarioTab() {
   const {
-    selectedScenario,
-    scenarioOptions,
-    handleScenarioChange
-  } = useScenarioSelection("Regulatory Macroeconomic Scenarios");
+    orderId,
+    page3,
+    savePageData,
+    nextStep,
+    prevStep
+  } = useOrderStore();
+
+
+  const { selectedScenario, scenarioOptions, handleScenarioChange, setSelectedScenario }
+    = useScenarioSelection(
+      page3?.scenario_option === "Custom Scenario Input"
+        ? "Custom Macroeconomic Scenarios"
+        : page3?.scenario_option === "macroeconomic"
+          ? "macroeconomic"
+          : "Regulatory Macroeconomic Scenarios"
+    );
+
+
+  useEffect(() => {
+    savePageData(3, {
+      ...page3,
+      scenario_option:
+        selectedScenario === "Custom Macroeconomic Scenarios"
+          ? "Custom Scenario Input"
+          : selectedScenario === "macroeconomic"
+            ? "macroeconomic"
+            : "Regulatory Macroeconomic Scenario",
+    });
+  }, [selectedScenario]);
+
+
 
   const [regulatoryFile, setRegulatoryFile] = useState<File | null>(null);
   const [customFile, setCustomFile] = useState<File | null>(null);
   // const [customLevels, setCustomLevels] = useState<any[]>([]);
-  const [macroLevels, setMacroLevels] = useState<any[]>([]);
+  const [macroLevels, setMacroLevels] = useState<any[]>(
+    page3?.macro_levels ?? []
+  );
 
-  const handleContinue = () => {
-    const isValid = validateScenarioData();
-    if (isValid) {
-      onContinue();
-    } else {
-      alert("Please fill all required fields");
+  useEffect(() => {
+    if (selectedScenario === "macroeconomic") {
+      savePageData(3, {
+        ...page3,
+        macro_levels: macroLevels,
+      });
+    }
+  }, [macroLevels]);
+
+
+  const handleContinue = async () => {
+    if (!orderId) return alert("Order not found");
+
+    const scenarioType =
+      selectedScenario === "Custom Macroeconomic Scenarios"
+        ? "Custom Scenario Input"
+        : selectedScenario === "macroeconomic"
+          ? "macroeconomic"
+          : "Regulatory Macroeconomic Scenario";
+
+    try {
+      if (scenarioType === "Regulatory Macroeconomic Scenario" && regulatoryFile) {
+        await OrdersAPI.savePage3(orderId, {
+          scenario_option: "Regulatory Macroeconomic Scenario",
+          scenario_upload: regulatoryFile,
+        });
+
+        savePageData(3, { scenario_option: "Regulatory Macroeconomic Scenario", uploaded: true });
+      }
+
+      if (scenarioType === "Custom Scenario Input" && customFile) {
+        await OrdersAPI.savePage3(orderId, {
+          scenario_option: "Custom Scenario Input",
+          scenario_upload: customFile,
+        });
+
+        savePageData(3, { scenario_option: "Custom Scenario Input", uploaded: true });
+      }
+
+      if (scenarioType === "macroeconomic") {
+        await OrdersAPI.savePage3(orderId, {
+          scenario_option: "macroeconomic",
+          levels: macroLevels,
+        });
+
+        savePageData(3, {
+          scenario_option: "macroeconomic",
+          macro_levels: macroLevels,
+        });
+      }
+
+      nextStep();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save scenario data");
     }
   };
 
+
   const handleBack = () => {
-    onBack();
-  }
+    prevStep();
+  };
+
 
   const validateScenarioData = () => {
     switch (selectedScenario) {

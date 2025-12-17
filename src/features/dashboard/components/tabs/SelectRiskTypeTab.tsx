@@ -1,6 +1,9 @@
 import { Section, RiskTypeCard, ContinueButton, RiskTypeRenderer, BackButton } from "../common";
 import { useRiskTypeSelection } from "./hooks/useRiskTypeSelection";
-import { useState } from "react";
+import { useOrderStore } from "@/stores/useOrderStore";
+import { OrdersAPI } from "@/api/orders.api";
+import { useEffect, useState } from "react";
+
 
 type Props = {
   onContinue: () => void;
@@ -8,17 +11,50 @@ type Props = {
 };
 
 
-export default function SelectRiskTypeTab({ onContinue, onBack }: Props) {
+export default function SelectRiskTypeTab() {
+  const {
+    orderId,
+    page4,
+    savePageData,
+    nextStep,
+    prevStep,
+  } = useOrderStore();
+
   const {
     selectedRiskType,
     riskTypeOptions,
     handleRiskTypeChange,
-    isRiskTypeEnabled
-  } = useRiskTypeSelection("Credit Risk");
+    isRiskTypeEnabled,
+    setSelectedRiskType,
+  } = useRiskTypeSelection(
+    page4?.risk_type ?? "Credit Risk"
+  );
 
-  const [riskMetrics, setRiskMetrics] = useState<any[]>([]);
+  useEffect(() => {
+    savePageData(4, {
+      ...page4,
+      risk_type: selectedRiskType,
+    });
+  }, [selectedRiskType]);
 
-  const handleContinue = () => {
+
+  const [riskMetrics, setRiskMetrics] = useState<any[]>(
+    page4?.metrics ?? []
+  );
+
+  useEffect(() => {
+    if (riskMetrics.length > 0) {
+      savePageData(4, {
+        ...page4,
+        metrics: riskMetrics,
+      });
+    }
+  }, [riskMetrics]);
+
+
+  const handleContinue = async () => {
+    if (!orderId) return alert("Order not found");
+
     if (!isRiskTypeEnabled(selectedRiskType)) {
       alert("Selected risk type is not available yet");
       return;
@@ -30,12 +66,32 @@ export default function SelectRiskTypeTab({ onContinue, onBack }: Props) {
       return;
     }
 
-    onContinue();
+    try {
+      await OrdersAPI.savePage4(orderId, {
+        risk_type: selectedRiskType,
+        metrics:
+          selectedRiskType === "Credit Risk"
+            ? riskMetrics
+            : undefined,
+      });
+
+      savePageData(4, {
+        risk_type: selectedRiskType,
+        metrics: riskMetrics,
+      });
+
+      nextStep();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save risk configuration");
+    }
   };
 
+
   const handleBack = () => {
-    onBack();
-  }
+    prevStep();
+  };
+
 
   const validateRiskTypeData = () => {
     // Validasi berdasarkan tipe risiko yang dipilih
