@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { DEFAULT_TABLE_DATA } from '../data/resultConfig';
+import { useState, useEffect } from 'react';
+import { OrdersAPI } from "@/api/orders.api";
+import { useOrderStore } from "@/stores/useOrderStore";
+import { mapResultTable } from "@features/dashboard/utils/mapResultTable";
 
 export interface TableData {
   scenario: string;
@@ -22,8 +24,10 @@ export interface ChartSection {
   dataKey: string;
 }
 
-export const useResults = (initialTableData: TableData[] = DEFAULT_TABLE_DATA) => {
-  const [tableData, setTableData] = useState<TableData[]>(initialTableData);
+export const useResults = () => {
+  const { orderId, pageResult, saveResult } = useOrderStore();
+
+  const [tableData, setTableData] = useState<TableData[]>([]);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     table: true,
     nplGross: false,
@@ -31,6 +35,41 @@ export const useResults = (initialTableData: TableData[] = DEFAULT_TABLE_DATA) =
     car: false,
     summary: false
   });
+
+  useEffect(() => {
+    if (!orderId) return;
+
+    // already in store → reuse
+    if (pageResult?.rawResult) {
+      setTableData(
+        mapResultTable(pageResult.rawResult.results_table_data)
+      );
+      return;
+    }
+
+    const fetchResult = async () => {
+      try {
+        const res = await OrdersAPI.getResult(orderId);
+        saveResult(res.data);
+
+        setTableData(
+          mapResultTable(res.data.results_table_data)
+        );
+      } catch (e) {
+        console.error("Failed to fetch result", e);
+      }
+    };
+
+    fetchResult();
+  }, [orderId]);
+
+  const chartData = {
+    nplGross: pageResult?.rawResult?.npl_gross_series || [],
+    nplNet: pageResult?.rawResult?.npl_net_series || [],
+    car: pageResult?.rawResult?.car_series || [],
+  };
+
+  
 
   const chartSections: ChartSection[] = [
     {
@@ -78,13 +117,13 @@ export const useResults = (initialTableData: TableData[] = DEFAULT_TABLE_DATA) =
 
   const downloadTableCSV = () => {
     const headers = Object.keys(tableData[0]).join(',');
-    const rows = tableData.map(row => 
-      Object.values(row).map(val => 
+    const rows = tableData.map(row =>
+      Object.values(row).map(val =>
         typeof val === 'number' ? val.toString() : `"${val}"`
       ).join(',')
     );
     const csvContent = [headers, ...rows].join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -96,12 +135,12 @@ export const useResults = (initialTableData: TableData[] = DEFAULT_TABLE_DATA) =
 
   return {
     tableData,
+    chartData,
     expandedSections,
     chartSections,
     toggleSection,
     expandAll,
     collapseAll,
     downloadTableCSV,
-    setTableData
   };
 };

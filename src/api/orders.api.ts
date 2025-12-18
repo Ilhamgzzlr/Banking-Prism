@@ -119,5 +119,5 @@ export const OrdersAPI = {
         http.post(`/orders/${orderId}/run`).then(res => res.data),
 
     getResult: (orderId: number) =>
-        http.get(`/orders/${orderId}/result`).then(res => res.data),
+        http.get(`/orders/${orderId}/result`),
 };

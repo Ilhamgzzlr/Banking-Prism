@@ -3,6 +3,8 @@ import { useScenarioSelection } from "./hooks/useScenarioSelection";
 import { useState, useEffect } from "react";
 import { useOrderStore } from "@/stores/useOrderStore";
 import { OrdersAPI } from "@/api/orders.api";
+import * as XLSX from 'xlsx';
+
 
 export default function InputScenarioTab() {
   const {
@@ -40,10 +42,55 @@ export default function InputScenarioTab() {
 
   const [regulatoryFile, setRegulatoryFile] = useState<File | null>(null);
   const [customFile, setCustomFile] = useState<File | null>(null);
-  // const [customLevels, setCustomLevels] = useState<any[]>([]);
+  const [sheetNames, setSheetNames] = useState<string[]>([]);
   const [macroLevels, setMacroLevels] = useState<any[]>(
     page3?.macro_levels ?? []
   );
+
+  const extractSheetNames = async (file: File) => {
+    return new Promise<string[]>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = e.target?.result;
+          const workbook = XLSX.read(data, { type: 'binary' });
+          resolve(workbook.SheetNames);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsBinaryString(file);
+    });
+  };
+
+  useEffect(() => {
+    const processFile = async () => {
+      const fileToProcess = selectedScenario === "Regulatory Macroeconomic Scenarios"
+        ? regulatoryFile
+        : customFile;
+
+      if (fileToProcess && (selectedScenario === "Regulatory Macroeconomic Scenarios" || selectedScenario === "Custom Macroeconomic Scenarios")) {
+        try {
+          const names = await extractSheetNames(fileToProcess);
+          setSheetNames(names);
+
+          // Save sheet names to store
+          savePageData(3, {
+            ...page3,
+            sheet_names: names,
+          });
+        } catch (error) {
+          console.error("Failed to extract sheet names:", error);
+          setSheetNames([]);
+        }
+      } else {
+        setSheetNames([]);
+      }
+    };
+
+    processFile();
+  }, [regulatoryFile, customFile, selectedScenario]);
 
   useEffect(() => {
     if (selectedScenario === "macroeconomic") {
@@ -72,7 +119,7 @@ export default function InputScenarioTab() {
           scenario_upload: regulatoryFile,
         });
 
-        savePageData(3, { scenario_option: "Regulatory Macroeconomic Scenario", uploaded: true });
+        savePageData(3, { scenario_option: "Regulatory Macroeconomic Scenario", uploaded: true, sheet_names: sheetNames });
       }
 
       if (scenarioType === "Custom Scenario Input" && customFile) {
@@ -81,7 +128,7 @@ export default function InputScenarioTab() {
           scenario_upload: customFile,
         });
 
-        savePageData(3, { scenario_option: "Custom Scenario Input", uploaded: true });
+        savePageData(3, { scenario_option: "Custom Scenario Input", uploaded: true, sheet_names: sheetNames });
       }
 
       if (scenarioType === "macroeconomic") {
@@ -126,14 +173,6 @@ export default function InputScenarioTab() {
     return regulatoryFile !== null;
   };
 
-  // const validateCustomScenario = () => {
-  //   // Validasi minimal 1 level, semua level harus memiliki nama dan file
-  //   if (customLevels.length === 0) return false;
-
-  //   return customLevels.every(level =>
-  //     level.name && level.name.trim() !== "" && level.file !== null
-  //   );
-  // };
   const validateCustomScenario = () => {
     return customFile !== null;
   };
@@ -156,10 +195,6 @@ export default function InputScenarioTab() {
   const handleRegulatoryFileChange = (file: File | null) => {
     setRegulatoryFile(file);
   };
-
-  // const handleCustomLevelsChange = (levels: any[]) => {
-  //   setCustomLevels(levels);
-  // };
 
   const handleCustomFileChange = (file: File | null) => {
     setCustomFile(file);

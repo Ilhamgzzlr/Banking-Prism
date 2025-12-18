@@ -106,7 +106,7 @@ export default function CreditRisk({
                   Risk Limit
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={metric.riskLimit}
                   onChange={(e) =>
                     handleValidatedInputChange(index, "riskLimit", e.target.value)
@@ -124,7 +124,7 @@ export default function CreditRisk({
                   Risk Tolerance
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={metric.riskTolerance}
                   onChange={(e) =>
                     handleValidatedInputChange(index, "riskTolerance", e.target.value)
@@ -142,7 +142,7 @@ export default function CreditRisk({
                   Risk Appetite
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={metric.riskAppetite}
                   onChange={(e) =>
                     handleValidatedInputChange(index, "riskAppetite", e.target.value)
@@ -160,7 +160,7 @@ export default function CreditRisk({
                   Risk Capacity
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={metric.riskCapacity}
                   onChange={(e) =>
                     handleValidatedInputChange(index, "riskCapacity", e.target.value)

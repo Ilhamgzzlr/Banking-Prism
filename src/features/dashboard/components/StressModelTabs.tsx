@@ -8,7 +8,6 @@ const steps = [
   "Select Risk Type",
   "Macro Selection",
   "Input Parameter",
-  "Select Model",
   "Result",
 ];
 
@@ -93,11 +92,11 @@ export default function StressModelTabs() {
         />
       )}
 
-      {currentStep === 6 && (
+      {/* {currentStep === 6 && (
         <SelectModelTab onContinue={nextStep} onBack={prevStep} />
-      )}
+      )} */}
 
-      {currentStep === 7 && (
+      {currentStep === 6 && (
         <ResultTab />
       )}
 

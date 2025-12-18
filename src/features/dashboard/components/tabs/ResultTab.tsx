@@ -1,11 +1,12 @@
 import { Download, Maximize2, Minimize2 } from "lucide-react";
-import { ExpandableSection, ResultsTable, ChartPlaceholder } from "../common";
+import { ExpandableSection, ResultsTable, ScenarioLineChart, ScenarioBarChart } from "../common";
 import { useResults } from "./hooks/useResults";
 import { TABLE_COLUMNS } from "./data/resultConfig";
 
 export default function ResultTab() {
     const {
         tableData,
+        chartData,
         expandedSections,
         chartSections,
         toggleSection,
@@ -14,6 +15,7 @@ export default function ResultTab() {
         downloadTableCSV
     } = useResults();
 
+    console.log("table data :", tableData);
 
     const handleExportResults = () => {
         downloadTableCSV();
@@ -78,13 +80,29 @@ export default function ResultTab() {
                     onToggle={() => toggleSection(chart.id)}
                 >
                     <div className="p-4">
-                        <ChartPlaceholder
-                            width={800}
-                            height={400}
-                        />
+                        {chart.id === "nplGross" && (
+                            <ScenarioLineChart
+                                data={chartData.nplGross}
+                                valueFormatter={(v) => `${(v * 100).toFixed(2)}%`}
+                            />
+                        )}
+
+                        {chart.id === "nplNet" && (
+                            <ScenarioLineChart
+                                data={chartData.nplNet}
+                                valueFormatter={(v) => `${(v * 100).toFixed(2)}%`}
+                            />
+                        )}
+
+                        {chart.id === "car" && (
+                            <ScenarioBarChart
+                                data={chartData.car}
+                            />
+                        )}
                     </div>
                 </ExpandableSection>
             ))}
+
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 pt-4">

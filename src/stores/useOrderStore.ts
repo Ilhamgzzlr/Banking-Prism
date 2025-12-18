@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Page5Macro } from "@/types/page5Macro";
 import type { StressTestParameters } from "@/types/page6";
+import type { OrderResultResponse } from "@/types/result"
 
 
 interface OrderState {
@@ -15,6 +16,7 @@ interface OrderState {
         scenario_option: "Regulatory Macroeconomic Scenario" | "Custom Scenario Input" | "macroeconomic";
         macro_levels?: any[];
         scenario_upload?: boolean;
+        sheet_names?: string[];
     };
 
     page4?: {
@@ -28,6 +30,9 @@ interface OrderState {
         parameters: StressTestParameters;
     };
 
+    pageResult?: {
+        rawResult?: OrderResultResponse;
+    };
 
     setOrderId: (id: number) => void;
     setStep: (step: number) => void;
@@ -35,6 +40,7 @@ interface OrderState {
     prevStep: () => void;
 
     savePageData: (page: number, data: any) => void;
+    saveResult: (result: OrderResultResponse) => void;
     reset: () => void;
 }
 
@@ -56,6 +62,11 @@ export const useOrderStore = create<OrderState>()(
                 set((state) => ({
                     ...state,
                     [`page${page}`]: data,
+                })),
+
+            saveResult: (result: OrderResultResponse) => 
+                set((state) => ({
+                    pageResult: { rawResult: result }
                 })),
 
             reset: () =>

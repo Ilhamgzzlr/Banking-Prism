@@ -22,11 +22,23 @@ const PercentileInput = ({
       </label>
       <div className="relative">
         <input
-          type="text"
+          type="number"
           name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-96 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-gray-50 ${className}`}
+          className={`
+            w-96 px-4 py-2 
+            border border-gray-300 rounded-md 
+            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+            outline-none bg-gray-50
+            /* Hilangkan spinner untuk semua browser */
+            [&::-webkit-outer-spin-button]:appearance-none
+            [&::-webkit-inner-spin-button]:appearance-none
+            [&::-webkit-inner-spin-button]:m-0
+            [-moz-appearance:textfield]
+            [appearance:textfield]
+            ${className}
+          `}
           placeholder={placeholder}
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">

@@ -6,12 +6,6 @@ import { mapCreditRiskMetricsToPayload } from "@/api/mapper/risk";
 import { useEffect, useState } from "react";
 
 
-// type Props = {
-//   onContinue: () => void;
-//   onBack: () => void;
-// };
-
-
 export default function SelectRiskTypeTab() {
   const {
     orderId,
@@ -26,7 +20,6 @@ export default function SelectRiskTypeTab() {
     riskTypeOptions,
     handleRiskTypeChange,
     isRiskTypeEnabled,
-    setSelectedRiskType,
   } = useRiskTypeSelection(
     page4?.risk_type ?? "Credit Risk"
   );
@@ -103,7 +96,6 @@ export default function SelectRiskTypeTab() {
         return validateCreditRiskData();
       case "Liquidity Risk":
       case "Market Risk":
-        // Untuk tipe risiko yang belum tersedia, cukup validasi bahwa tipe risiko dipilih
         return true;
       default:
         return false;

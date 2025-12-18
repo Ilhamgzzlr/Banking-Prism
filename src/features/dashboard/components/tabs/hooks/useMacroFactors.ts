@@ -14,9 +14,20 @@ export const useMacroFactors = (customFactors?: MacroFactor[], noMacroPercentile
     const [factors, setFactors] = useState<MacroFactor[]>(
         customFactors || DEFAULT_MACRO_FACTORS
     );
-    const [percentiles, setPercentiles] = useState({
-        level1: "",
-        level2: ""
+    const [percentiles, setPercentiles] = useState<Record<string, string>>(() => {
+        // If we have saved percentiles, restore them
+        if (noMacroPercentile && noMacroPercentile.length > 0) {
+            const restored: Record<string, string> = {};
+            noMacroPercentile.forEach((value, index) => {
+                restored[`level${index + 1}`] = value;
+            });
+            return restored;
+        }
+        // Default to two levels
+        return {
+            level1: "",
+            level2: ""
+        };
     });
 
     const handleFactorToggle = (id: string, value: boolean) => {
@@ -46,7 +57,7 @@ export const useMacroFactors = (customFactors?: MacroFactor[], noMacroPercentile
         }));
     };
 
-    const handlePercentileChange = (level: 'level1' | 'level2', value: string) => {
+    const handlePercentileChange = (level: string, value: string) => {
         setPercentiles(prev => ({
             ...prev,
             [level]: value
@@ -79,14 +90,20 @@ export const useMacroFactors = (customFactors?: MacroFactor[], noMacroPercentile
     const validatePercentiles = () => {
         if (!showPercentileSection) return true;
 
-        const level1 = parseFloat(percentiles.level1);
-        const level2 = parseFloat(percentiles.level2);
+        const values = Object.values(percentiles);
 
-        if (isNaN(level1) || isNaN(level2)) {
-            return false;
+        const filledValues = values.filter(v => v && v.trim() !== "");
+        if (filledValues.length === 0) return false;
+
+        // Validate all filled percentiles
+        for (const value of filledValues) {
+            const num = parseFloat(value);
+            if (isNaN(num) || num < 0.1 || num > 99.9) {
+                return false;
+            }
         }
 
-        return level1 >= 0.1 && level1 <= 99.9 && level2 >= 0.1 && level2 <= 99.9;
+        return true;
     };
 
     return {

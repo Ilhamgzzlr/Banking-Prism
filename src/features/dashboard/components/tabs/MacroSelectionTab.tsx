@@ -5,17 +5,11 @@ import { buildMacroFactors } from "@/features/dashboard/utils/buildMacroFactors"
 import { OrdersAPI } from "@/api/orders.api";
 import { useEffect } from "react";
 
-
-// type Props = {
-//   onContinue: () => void;
-//   onBack: () => void;
-// };
-
-
 export default function MacroSelectionTab() {
   const {
     orderId,
     page2,
+    page3,
     page5,
     savePageData,
     nextStep,
@@ -26,6 +20,11 @@ export default function MacroSelectionTab() {
   const stressColumns = page2?.stress_columns || [];
   const macroColumns = page2?.macro_columns || [];
 
+  const sheetNames = page3?.sheet_names || [];
+
+  const hasCustomOrRegulatoryScenario =
+    page3?.scenario_option === "Custom Scenario Input" ||
+    page3?.scenario_option === "Regulatory Macroeconomic Scenario";
 
   const factorsFromFiles = buildMacroFactors(
     stressColumns,
@@ -65,10 +64,7 @@ export default function MacroSelectionTab() {
           : null,
       })),
       no_macro_percentile: hasNoMacro
-        ? [
-          percentiles.level1,
-          percentiles.level2,
-        ].filter(Boolean)
+        ? Object.values(percentiles).filter(Boolean)
         : null,
     };
   };
@@ -132,7 +128,7 @@ export default function MacroSelectionTab() {
             </span>
             {selectedSubFactorCount > 0 && (
               <span className="text-sm bg-green-50 text-green-700 px-3 py-1 rounded-full">
-                {selectedSubFactorCount} sub-factor{selectedSubFactorCount !== 1 ? 's' : ''}
+                {selectedSubFactorCount} Macrofactor{selectedSubFactorCount !== 1 ? 's' : ''}
               </span>
             )}
           </div>
@@ -153,11 +149,10 @@ export default function MacroSelectionTab() {
 
       {/* Percentile Section */}
       <PercentileSection
-        level1={percentiles.level1}
-        level2={percentiles.level2}
-        onLevel1Change={(value) => handlePercentileChange('level1', value)}
-        onLevel2Change={(value) => handlePercentileChange('level2', value)}
+        percentiles={percentiles}
+        onPercentileChange={handlePercentileChange}
         show={showPercentileSection}
+        levelNames={hasCustomOrRegulatoryScenario ? sheetNames : undefined}
       />
 
       {/* Action Buttons */}
