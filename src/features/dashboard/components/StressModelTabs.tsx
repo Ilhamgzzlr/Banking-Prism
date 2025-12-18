@@ -19,26 +19,9 @@ interface FileColumnsState {
 
 
 export default function StressModelTabs() {
-  // const [currentStep, setCurrentStep] = useState(0);
   const [fileColumns, setFileColumns] = useState<FileColumnsState>({
     macroeconomic: []
   });
-
-  // const [orderId, setOrderId] = useState<number | null>(null);
-
-  // const nextStep = () => {
-  //   setCurrentStep((prev) => prev + 1);
-  // };
-
-  // const prevStep = () => {
-  //   setCurrentStep((prev) => prev - 1);
-  // }
-
-
-  // const handleFileDataContinue = (columns: FileColumnsState) => {
-  //   setFileColumns(columns);
-  //   nextStep();
-  // };
 
   const {
     currentStep,
@@ -106,13 +89,16 @@ export default function StressModelTabs() {
 
       {currentStep === 3 && (
         <SelectRiskTypeTab
-          // onContinue={nextStep}
-          // onBack={prevStep}
+        // onContinue={nextStep}
+        // onBack={prevStep}
         />
       )}
 
       {currentStep === 4 && (
-        <MacroSelectionTab onContinue={nextStep} onBack={prevStep} />
+        <MacroSelectionTab
+          // onContinue={nextStep}
+          // onBack={prevStep}
+        />
       )}
 
       {currentStep === 5 && (

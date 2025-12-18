@@ -9,40 +9,51 @@ interface RiskMetric {
 }
 
 interface CreditRiskProps {
+  initialMetrics?: RiskMetric[];
   onMetricsChange?: (metrics: RiskMetric[]) => void;
 }
 
-export default function CreditRisk({ onMetricsChange }: CreditRiskProps) {
-  const [metrics, setMetrics] = useState<RiskMetric[]>([
-    {
-      name: "NPL Gross",
-      riskLimit: "",
-      riskTolerance: "",
-      riskAppetite: "",
-      riskCapacity: ""
-    },
-    {
-      name: "NPL Net",
-      riskLimit: "",
-      riskTolerance: "",
-      riskAppetite: "",
-      riskCapacity: ""
-    },
-    {
-      name: "Capital Adequacy Ratio (CAR)",
-      riskLimit: "",
-      riskTolerance: "",
-      riskAppetite: "",
-      riskCapacity: ""
-    }
-  ]);
+export default function CreditRisk({
+  initialMetrics,
+  onMetricsChange
+}: CreditRiskProps) {
+  const [metrics, setMetrics] = useState<RiskMetric[]>(
+    initialMetrics && initialMetrics.length > 0
+      ? initialMetrics
+      : [
+        {
+          name: "NPL Gross",
+          riskLimit: "",
+          riskTolerance: "",
+          riskAppetite: "",
+          riskCapacity: ""
+        },
+        {
+          name: "NPL Net",
+          riskLimit: "",
+          riskTolerance: "",
+          riskAppetite: "",
+          riskCapacity: ""
+        },
+        {
+          name: "Capital Adequacy Ratio (CAR)",
+          riskLimit: "",
+          riskTolerance: "",
+          riskAppetite: "",
+          riskCapacity: ""
+        }
+      ]
+  );
 
   // Notify parent ketika metrics berubah
   useEffect(() => {
-    if (onMetricsChange) {
-      onMetricsChange(metrics);
+    if (metrics.some(m =>
+      m.riskLimit || m.riskTolerance || m.riskAppetite || m.riskCapacity
+    )) {
+      onMetricsChange?.(metrics);
     }
-  }, [metrics, onMetricsChange]);
+  }, [metrics]);
+
 
   const handleInputChange = (
     index: number,

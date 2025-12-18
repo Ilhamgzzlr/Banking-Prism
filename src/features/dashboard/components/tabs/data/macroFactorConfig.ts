@@ -13,18 +13,24 @@ export const DEFAULT_MACRO_FACTORS: MacroFactor[] = [
     id: "PD_B", 
     name: "PD_B", 
     selected: false,
+    subFactors: ["Macro A", "Macro B", "Macro C"], 
+    selectedSubFactors: [],
     description: "Probability of Default - Group B"
   },
   { 
     id: "PD_C", 
     name: "PD_C", 
     selected: false,
+    subFactors: ["Macro A", "Macro B", "Macro C"], 
+    selectedSubFactors: [],
     description: "Probability of Default - Group C"
   },
   { 
     id: "PD_D", 
     name: "PD_D", 
     selected: false,
+    subFactors: ["Macro A", "Macro B", "Macro C"],
+    selectedSubFactors: [],
     description: "Probability of Default - Group D"
   },
 ];

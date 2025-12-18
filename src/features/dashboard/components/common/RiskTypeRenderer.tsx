@@ -2,13 +2,19 @@ import { CreditRisk } from "../tabs/risk-types";
 
 interface RiskTypeRendererProps {
   riskType: string;
+  metrics?: any[];
   onMetricsChange?: (metrics: any[]) => void;
 }
 
-const RiskTypeRenderer = ({ riskType, onMetricsChange }: RiskTypeRendererProps) => {
+const RiskTypeRenderer = ({ riskType, metrics, onMetricsChange }: RiskTypeRendererProps) => {
   switch (riskType) {
     case "Credit Risk":
-      return <CreditRisk onMetricsChange={onMetricsChange} />;
+      return (
+        <CreditRisk
+          initialMetrics={metrics}
+          onMetricsChange={onMetricsChange}
+        />
+      );
     case "Liquidity Risk":
       return (
         <div className="p-8 text-center">

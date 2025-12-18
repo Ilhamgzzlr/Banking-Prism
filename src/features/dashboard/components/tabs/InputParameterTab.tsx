@@ -6,6 +6,7 @@ import {
   LGD_METHODS,
   LOAN_SEGMENTS
 } from "./data/parameterConfig";
+import { useOrderStore } from "@/stores/useOrderStore";
 
 type Props = {
   onContinue: () => void;
@@ -15,6 +16,10 @@ type Props = {
 
 
 export default function InputParameterTab({ onContinue, onBack, fileColumns }: Props) {
+  const { page2 } = useOrderStore();
+
+  const gdpColumnOptions = page2?.macro_columns || [];
+
   const {
     parameters,
     updateParameter,
@@ -78,7 +83,7 @@ export default function InputParameterTab({ onContinue, onBack, fileColumns }: P
     { id: "rwa_operational", label: "Operational RWA", value: parameters.rwa_operational, placeholder: "e.g., 50000" }
   ];
 
-  const gdpColumnOptions = fileColumns?.macroeconomic || [];
+  // const gdpColumnOptions = fileColumns?.macroeconomic || [];
 
   return (
     <div className="space-y-8">
@@ -132,7 +137,7 @@ export default function InputParameterTab({ onContinue, onBack, fileColumns }: P
                     >
                       <option value="">Select GDP column...</option>
                       {gdpColumnOptions.length > 0 ? (
-                        gdpColumnOptions.slice(1).map((column) => (
+                        gdpColumnOptions.slice(1).map((column: any) => (
                           <option key={column} value={column}>
                             {column}
                           </option>

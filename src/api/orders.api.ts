@@ -1,5 +1,6 @@
 // src/api/orders.api.ts
 import { http } from "./http";
+import type { Page5Macro } from "@/types/page5Macro";
 
 export const OrdersAPI = {
     createOrder: (payload: {
@@ -57,15 +58,23 @@ export const OrdersAPI = {
         orderId: number,
         payload: {
             risk_type: string;
-            metrics?: any[];
+            npl_gross_limits?: any;
+            npl_net_limits?: any;
+            car_limits?: any;
         }
     ) =>
         http
             .put(`/orders/${orderId}/config/page4`, payload)
             .then(res => res.data),
 
-    savePage5: (orderId: number, payload: any) =>
-        http.put(`/orders/${orderId}/config/page5`, payload).then(res => res.data),
+    savePage5: (
+        orderId: number,
+        payload: Page5Macro
+    ) =>
+        http
+            .put(`/orders/${orderId}/config/page5`, payload)
+            .then(res => res.data),
+
 
     savePage6: (orderId: number, payload: any) =>
         http.put(`/orders/${orderId}/config/page6`, payload).then(res => res.data),

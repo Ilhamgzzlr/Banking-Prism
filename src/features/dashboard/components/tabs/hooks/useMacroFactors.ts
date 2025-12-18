@@ -10,7 +10,7 @@ export interface MacroFactor {
     description?: string;
 }
 
-export const useMacroFactors = (customFactors?: MacroFactor[]) => {
+export const useMacroFactors = (customFactors?: MacroFactor[], noMacroPercentile?: string[] | null) => {
     const [factors, setFactors] = useState<MacroFactor[]>(
         customFactors || DEFAULT_MACRO_FACTORS
     );
@@ -62,7 +62,10 @@ export const useMacroFactors = (customFactors?: MacroFactor[]) => {
         return factor?.selectedSubFactors || [];
     };
 
-    const showPercentileSection = factors.filter(f => f.id !== "PD_A").some(f => f.selected);
+    const showPercentileSection =
+        !noMacroPercentile || noMacroPercentile.length === 0;
+
+
 
     const resetSelection = () => {
         setFactors(factors.map(factor => ({

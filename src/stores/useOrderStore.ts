@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { Page5Macro } from "@/types/page5Macro";
+
 
 interface OrderState {
     orderId: number | null;
@@ -19,7 +21,8 @@ interface OrderState {
         metrics?: any[];
     };
 
-    page5?: any;
+    page5?: Page5Macro;
+
     page6?: any;
 
     setOrderId: (id: number) => void;

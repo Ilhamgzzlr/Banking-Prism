@@ -66,6 +66,7 @@ export default function InputDataTab() {
         stress_uploaded: true,
         macro_uploaded: true,
         macro_columns: fileColumns.macroeconomic,
+        stress_columns: fileColumns.stressTest
       });
 
       nextStep(); // pakai Zustand, bukan props

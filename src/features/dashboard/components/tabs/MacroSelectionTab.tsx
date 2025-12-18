@@ -1,14 +1,39 @@
 import { Section, MacroFactorItem, PercentileSection, ContinueButton, BackButton } from "../common";
 import { useMacroFactors } from "./hooks/useMacroFactors";
 import { DEFAULT_MACRO_FACTORS } from "./data/macroFactorConfig";
+import { useOrderStore } from "@/stores/useOrderStore";
+import { buildMacroFactors } from "@/features/dashboard/utils/buildMacroFactors";
+import { OrdersAPI } from "@/api/orders.api";
+import { useEffect } from "react";
 
-type Props = {
-  onContinue: () => void;
-  onBack: () => void;
-};
+
+// type Props = {
+//   onContinue: () => void;
+//   onBack: () => void;
+// };
 
 
-export default function MacroSelectionTab({ onContinue, onBack }: Props) {
+export default function MacroSelectionTab() {
+  const {
+    orderId,
+    page2,
+    page5,
+    savePageData,
+    nextStep,
+    prevStep,
+  } = useOrderStore();
+
+
+  const stressColumns = page2?.stress_columns || [];
+  const macroColumns = page2?.macro_columns || [];
+
+
+  const factorsFromFiles = buildMacroFactors(
+    stressColumns,
+    macroColumns,
+    page5?.macro_factors
+  );
+  
   const {
     factors,
     percentiles,
@@ -16,16 +41,48 @@ export default function MacroSelectionTab({ onContinue, onBack }: Props) {
     handleSubFactorToggle,
     handlePercentileChange,
     showPercentileSection,
-    validatePercentiles
-  } = useMacroFactors(DEFAULT_MACRO_FACTORS);
+    validatePercentiles,
+  } = useMacroFactors(
+    factorsFromFiles,
+    page5?.no_macro_percentile
+  );
+
+  useEffect(() => {
+    savePageData(5, {
+      macro_factors: factors,
+      percentiles,
+    });
+  }, [factors, percentiles]);
+
+  const noMacroPercentile = factors
+    .filter(f => f.selected === false)
+    .map(f => f.id);
+
+
+  const buildPage5Payload = () => {
+    return {
+      macro_factors: factors.map(f => ({
+        column_name: f.id,
+        is_macro_factor: f.selected,
+        related_historical_macros: f.selected
+          ? f.selectedSubFactors ?? []
+          : null,
+      })),
+      no_macro_percentile: noMacroPercentile.length > 0
+        ? noMacroPercentile
+        : null,
+    };
+  };
+
 
   const selectedCount = factors.filter(f => f.selected).length;
-  const selectedSubFactorCount = factors.reduce((total, factor) => 
+  const selectedSubFactorCount = factors.reduce((total, factor) =>
     total + (factor.selectedSubFactors?.length || 0), 0
   );
 
-  const handleContinue = () => {
-    // Validate percentiles if section is shown
+  const handleContinue = async () => {
+    if (!orderId) return alert("Order not found");
+
     if (showPercentileSection && !validatePercentiles()) {
       alert("Please enter valid percentiles (between 0.1 and 99.9)");
       return;
@@ -37,21 +94,33 @@ export default function MacroSelectionTab({ onContinue, onBack }: Props) {
       return;
     }
 
-    onContinue();
+    try {
+      const payload = buildPage5Payload();
+
+      await OrdersAPI.savePage5(orderId, payload);
+
+      savePageData(5, payload);
+      nextStep();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save macro configuration");
+    }
   };
 
-  const handleBack = () => {
-    onBack();
-  }
 
-  const isContinueEnabled = factors.some(f => f.selected) && 
+  const handleBack = () => {
+    prevStep();
+  };
+
+
+  const isContinueEnabled = factors.some(f => f.selected) &&
     (!showPercentileSection || validatePercentiles());
 
   return (
     <div className="space-y-6">
       {/* Title with selection summary */}
-      <Section 
-        title="Choose Macroeconomics Factor" 
+      <Section
+        title="Choose Macroeconomics Factor"
         required
       >
         <div className="flex items-center justify-between mb-4">
@@ -98,7 +167,7 @@ export default function MacroSelectionTab({ onContinue, onBack }: Props) {
           onClick={handleBack}
           label="Back"
         />
-        <ContinueButton 
+        <ContinueButton
           onClick={handleContinue}
           disabled={!isContinueEnabled}
           label="Continue"

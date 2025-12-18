@@ -2,13 +2,14 @@ import { Section, RiskTypeCard, ContinueButton, RiskTypeRenderer, BackButton } f
 import { useRiskTypeSelection } from "./hooks/useRiskTypeSelection";
 import { useOrderStore } from "@/stores/useOrderStore";
 import { OrdersAPI } from "@/api/orders.api";
+import { mapCreditRiskMetricsToPayload } from "@/api/mapper/risk";
 import { useEffect, useState } from "react";
 
 
-type Props = {
-  onContinue: () => void;
-  onBack: () => void;
-};
+// type Props = {
+//   onContinue: () => void;
+//   onBack: () => void;
+// };
 
 
 export default function SelectRiskTypeTab() {
@@ -31,11 +32,14 @@ export default function SelectRiskTypeTab() {
   );
 
   useEffect(() => {
-    savePageData(4, {
-      ...page4,
-      risk_type: selectedRiskType,
-    });
+    if (page4?.risk_type !== selectedRiskType) {
+      savePageData(4, {
+        ...page4,
+        risk_type: selectedRiskType,
+      });
+    }
   }, [selectedRiskType]);
+
 
 
   const [riskMetrics, setRiskMetrics] = useState<any[]>(
@@ -66,13 +70,12 @@ export default function SelectRiskTypeTab() {
       return;
     }
 
+    const creditRiskPayload = mapCreditRiskMetricsToPayload(riskMetrics);
+
     try {
       await OrdersAPI.savePage4(orderId, {
         risk_type: selectedRiskType,
-        metrics:
-          selectedRiskType === "Credit Risk"
-            ? riskMetrics
-            : undefined,
+        ...creditRiskPayload,
       });
 
       savePageData(4, {
@@ -158,6 +161,7 @@ export default function SelectRiskTypeTab() {
         </h3>
         <div className="border rounded-lg p-6 bg-white">
           <RiskTypeRenderer
+            metrics={riskMetrics}
             riskType={selectedRiskType}
             onMetricsChange={handleRiskMetricsChange}
           />

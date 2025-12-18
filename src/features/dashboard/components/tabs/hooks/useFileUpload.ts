@@ -1,17 +1,23 @@
-import { useState } from 'react';
-import { getFileColumns } from '@/features/dashboard/utils/fileReader';
+import { useState } from "react";
+import { getFileColumns } from "@/features/dashboard/utils/fileReader";
 
 interface FileUploadState {
   stressTest: File | null;
   macroeconomic: File | null;
 }
 
+interface FileColumnsState {
+  stressTest: string[];
+  macroeconomic: string[];
+}
+
 interface UseFileUploadReturn {
   files: FileUploadState;
-  fileColumns: {
-    macroeconomic: string[];
-  };
-  handleFileSelect: (type: keyof FileUploadState, file: File | null) => Promise<void>;
+  fileColumns: FileColumnsState;
+  handleFileSelect: (
+    type: keyof FileUploadState,
+    file: File | null
+  ) => Promise<void>;
   handleRemoveFile: (type: keyof FileUploadState) => void;
   resetFiles: () => void;
   getTotalFileSize: () => number;
@@ -25,75 +31,60 @@ export const useFileUpload = (
   }
 ): UseFileUploadReturn => {
   const [files, setFiles] = useState<FileUploadState>(initialState);
-  const [fileColumns, setFileColumns] = useState<{
-    macroeconomic: string[];
-  }>({
+
+  const [fileColumns, setFileColumns] = useState<FileColumnsState>({
+    stressTest: [],
     macroeconomic: []
   });
 
+  /**
+   * HANDLE FILE SELECT
+   */
   const handleFileSelect = async (type: keyof FileUploadState, file: File | null) => {
-    if (file) {
-      let columns: string[] = [];
+    if (!file) return;
 
-      if (type === 'macroeconomic') {
-        try {
-          columns = await getFileColumns(file);
-        } catch (error) {
-          console.error('Error reading file columns:', error);
-          columns = [];
-        }
-      }
+    let columns: string[] = [];
 
-      setFiles(prev => ({
-        ...prev,
-        [type]: file
-      }));
-
-      if (type === 'macroeconomic') {
-        setFileColumns(prev => ({
-          ...prev,
-          macroeconomic: columns
-        }));
-      }
-    } else {
-      setFiles(prev => ({
-        ...prev,
-        [type]: null
-      }));
-
-      if (type === 'macroeconomic') {
-        setFileColumns(prev => ({
-          ...prev,
-          macroeconomic: []
-        }));
-      }
+    try {
+      columns = await getFileColumns(file);
+    } catch (e) {
+      console.error(e);
     }
-  };
 
-  const handleRemoveFile = (type: keyof FileUploadState) => {
-    setFiles(prev => ({
+    setFiles(prev => ({ ...prev, [type]: file }));
+
+    setFileColumns(prev => ({
       ...prev,
-      [type]: null
+      [type]: columns
     }));
-
-    if (type === 'macroeconomic') {
-      setFileColumns(prev => ({
-        ...prev,
-        macroeconomic: []
-      }));
-    }
   };
 
+
+  /**
+   * REMOVE FILE (explicit)
+   */
+  const handleRemoveFile = (type: keyof FileUploadState) => {
+    setFiles(prev => ({ ...prev, [type]: null }));
+    setFileColumns(prev => ({ ...prev, [type]: [] }));
+  };
+
+  /**
+   * RESET ALL
+   */
   const resetFiles = () => {
     setFiles({
       stressTest: null,
       macroeconomic: null
     });
     setFileColumns({
+      stressTest: [],
       macroeconomic: []
     });
   };
 
+  /**
+   * TOTAL FILE SIZE
+   */
   const getTotalFileSize = () => {
     let total = 0;
     if (files.stressTest) total += files.stressTest.size;
