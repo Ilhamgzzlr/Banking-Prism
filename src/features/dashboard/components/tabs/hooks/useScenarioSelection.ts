@@ -7,6 +7,8 @@ export interface ScenarioOption {
   id: ScenarioType;
   label: string;
   description?: string;
+  templatePath?: string;
+  templateFileName?: string;
 }
 
 export const useScenarioSelection = (

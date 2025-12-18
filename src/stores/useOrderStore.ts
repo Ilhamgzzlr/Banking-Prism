@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Page5Macro } from "@/types/page5Macro";
+import type { StressTestParameters } from "@/types/page6";
 
 
 interface OrderState {
@@ -23,7 +24,10 @@ interface OrderState {
 
     page5?: Page5Macro;
 
-    page6?: any;
+    page6?: {
+        parameters: StressTestParameters;
+    };
+
 
     setOrderId: (id: number) => void;
     setStep: (step: number) => void;

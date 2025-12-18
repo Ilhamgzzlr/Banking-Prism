@@ -7,18 +7,25 @@ import {
   LOAN_SEGMENTS
 } from "./data/parameterConfig";
 import { useOrderStore } from "@/stores/useOrderStore";
+import { useEffect } from "react";
+import { OrdersAPI } from "@/api/orders.api";
 
-type Props = {
-  onContinue: () => void;
-  fileColumns?: { macroeconomic: string[] };
-  onBack: () => void;
-};
+// type Props = {
+//   onContinue: () => void;
+//   fileColumns?: { macroeconomic: string[] };
+//   onBack: () => void;
+// };
 
 
-export default function InputParameterTab({ onContinue, onBack, fileColumns }: Props) {
-  const { page2 } = useOrderStore();
-
-  const gdpColumnOptions = page2?.macro_columns || [];
+export default function InputParameterTab() {
+  const {
+    orderId,
+    page6,
+    page2,
+    savePageData,
+    nextStep,
+    prevStep,
+  } = useOrderStore();
 
   const {
     parameters,
@@ -26,20 +33,135 @@ export default function InputParameterTab({ onContinue, onBack, fileColumns }: P
     handleFileChange,
     validateParameters,
     setShowElasticityTooltip
-  } = useParameters();
+  } = useParameters(page6?.parameters);
 
-  const handleContinue = () => {
+
+  const gdpColumnOptions = page2?.macro_columns || [];
+
+  useEffect(() => {
+    savePageData(6, { parameters });
+  }, [parameters]);
+
+  const initParams = {
+    TRAIN_RATIO: Number(parameters.train_ratio),
+    RESID_MODE_PD: parameters.resid_mode_pd as "Normal" | "Bootstrapping" | "Residual",
+    WRITE_OFF_VALUE: Number(parameters.write_off_value),
+    N_PATHS_PD: Number(parameters.n_paths_pd),
+    CURE_RATE_VALUE: Number(parameters.cure_rate_value),
+    EQUITY: Number(parameters.equity),
+  };
+
+  const eadValues = LOAN_SEGMENTS.map(segment => ({
+    ead_column: segment,
+    value: Number(parameters[`exposure_${segment}`]),
+    elasticity_value:
+      parameters.ead_growth_assumption === "gdp"
+        ? Number(parameters[`ead_${segment}`])
+        : undefined,
+  }));
+
+  const eadConfig = {
+    ead_growth_assumption: (
+      parameters.ead_growth_assumption === "constant"
+        ? "Constant"
+        : parameters.ead_growth_assumption === "manual"
+          ? "Manual"
+          : "GDP Growth"
+    ) as "Constant" | "Manual" | "GDP Growth",
+
+    ead_values: eadValues,
+
+    gdp_column_name:
+      parameters.ead_growth_assumption === "gdp"
+        ? parameters.gdp_column
+        : undefined,
+  };
+
+  const nplValues = LOAN_SEGMENTS.reduce((acc, segment) => {
+    acc[segment] = Number(parameters[`npl_${segment}`]);
+    return acc;
+  }, {} as Record<string, number>);
+
+  const rwaConfig = {
+    credit_rwa: Number(parameters.rwa_credit),
+    non_credit_rwa: Number(parameters.rwa_non_credit),
+    operational_rwa: Number(parameters.rwa_operational),
+  };
+
+  const lgdConfig = {
+    lgd_mode: (
+      parameters.lgd_method === "rr"
+        ? "RR"
+        : parameters.lgd_method === "modelling_rr"
+          ? "Modelling RR"
+          : "Modelling LGD"
+    ) as "RR" | "Modelling RR" | "Modelling LGD",
+
+
+    rr_value:
+      parameters.lgd_method === "rr"
+        ? Number(parameters.rr_value)
+        : undefined,
+
+    historical_data_file:
+      parameters.lgd_method !== "rr"
+        ? parameters.lgd_method === "modelling_rr"
+          ? parameters.rr_file
+          : parameters.lgd_file
+        : null,
+
+    related_macro_data:
+      parameters.lgd_method !== "rr"
+        ? [
+          parameters.lgd_method === "modelling_rr"
+            ? parameters.rr_macro_column
+            : parameters.lgd_macro_column,
+        ]
+        : undefined,
+
+    modelling_approach:
+      parameters.lgd_method !== "rr"
+        ? parameters.lgd_method === "modelling_rr"
+          ? parameters.rr_modelling_approach
+          : parameters.lgd_modelling_approach
+        : undefined,
+  };
+
+
+
+  const handleContinue = async () => {
+    if (!orderId) return alert("Order not found");
+
     if (!validateParameters()) {
       alert("Please fill in all required parameters");
       return;
     }
 
-    onContinue();
+    const payload = {
+      init_params: initParams,
+      ead_config: eadConfig,
+      npl_values: nplValues,
+      rwa_config: rwaConfig,
+      lgd_config: lgdConfig,
+    };
+
+    try {
+      await OrdersAPI.savePage6(orderId, payload);
+
+      savePageData(6, { parameters });
+
+      await OrdersAPI.runCalculation(orderId);
+      nextStep();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save parameters");
+    }
   };
 
+
   const handleBack = () => {
-    onBack();
-  }
+    prevStep();
+  };
 
   // Prepare parameter sections data
   const initializationParams = INITIALIZATION_PARAMETERS.map(param => ({

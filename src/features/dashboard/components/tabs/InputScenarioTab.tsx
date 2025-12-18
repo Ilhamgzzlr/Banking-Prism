@@ -4,13 +4,6 @@ import { useState, useEffect } from "react";
 import { useOrderStore } from "@/stores/useOrderStore";
 import { OrdersAPI } from "@/api/orders.api";
 
-
-type Props = {
-  onContinue: () => void;
-  onBack: () => void;
-};
-
-
 export default function InputScenarioTab() {
   const {
     orderId,
@@ -21,7 +14,7 @@ export default function InputScenarioTab() {
   } = useOrderStore();
 
 
-  const { selectedScenario, scenarioOptions, handleScenarioChange, setSelectedScenario }
+  const { selectedScenario, scenarioOptions, handleScenarioChange }
     = useScenarioSelection(
       page3?.scenario_option === "Custom Scenario Input"
         ? "Custom Macroeconomic Scenarios"

@@ -1,6 +1,5 @@
 import { Section, MacroFactorItem, PercentileSection, ContinueButton, BackButton } from "../common";
 import { useMacroFactors } from "./hooks/useMacroFactors";
-import { DEFAULT_MACRO_FACTORS } from "./data/macroFactorConfig";
 import { useOrderStore } from "@/stores/useOrderStore";
 import { buildMacroFactors } from "@/features/dashboard/utils/buildMacroFactors";
 import { OrdersAPI } from "@/api/orders.api";
@@ -33,7 +32,7 @@ export default function MacroSelectionTab() {
     macroColumns,
     page5?.macro_factors
   );
-  
+
   const {
     factors,
     percentiles,
@@ -54,10 +53,7 @@ export default function MacroSelectionTab() {
     });
   }, [factors, percentiles]);
 
-  const noMacroPercentile = factors
-    .filter(f => f.selected === false)
-    .map(f => f.id);
-
+  const hasNoMacro = factors.some(f => f.selected === false);
 
   const buildPage5Payload = () => {
     return {
@@ -68,8 +64,11 @@ export default function MacroSelectionTab() {
           ? f.selectedSubFactors ?? []
           : null,
       })),
-      no_macro_percentile: noMacroPercentile.length > 0
-        ? noMacroPercentile
+      no_macro_percentile: hasNoMacro
+        ? [
+          percentiles.level1,
+          percentiles.level2,
+        ].filter(Boolean)
         : null,
     };
   };

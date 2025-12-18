@@ -7,12 +7,6 @@ import { useOrderStore } from "@/stores/useOrderStore";
 export type ScenarioType = "static" | "dynamic";
 export type AnalysisMethod = "Scenario Analysis" | "Sensitivity Analysis" | "Comprehensive Run";
 
-// type Props = {
-//   onContinue: () => void;
-//   onCreated: (orderId: number) => void;
-// };
-
-
 export default function StressTestMethodTab() {
   const { orderId, setOrderId, nextStep, savePageData, page1 } = useOrderStore();
 
@@ -30,8 +24,6 @@ export default function StressTestMethodTab() {
   };
 
   const handleMethodChange = (methodTitle: string) => {
-    // Konversi title ke value yang sesuai
-    // Anda mungkin perlu menyesuaikan logika ini berdasarkan data METHOD_OPTIONS
     const methodValue = methodTitle.toLowerCase() as AnalysisMethod;
     setSelectedMethod(methodValue);
   };
@@ -45,9 +37,9 @@ export default function StressTestMethodTab() {
     };
 
     if (!orderId) {
-    const order = await OrdersAPI.createOrder(payload);
-    setOrderId(order.order_id);
-  }
+      const order = await OrdersAPI.createOrder(payload);
+      setOrderId(order.order_id);
+    }
     savePageData(1, payload);
     nextStep();
   };

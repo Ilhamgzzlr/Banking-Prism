@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StressTestMethodTab, InputDataTab, InputScenarioTab, SelectRiskTypeTab, MacroSelectionTab, InputParameterTab, SelectModelTab, ResultTab } from "./tabs";
 import { useOrderStore } from "@/stores/useOrderStore";
 
@@ -13,15 +12,8 @@ const steps = [
   "Result",
 ];
 
-interface FileColumnsState {
-  macroeconomic: string[];
-}
-
 
 export default function StressModelTabs() {
-  const [fileColumns, setFileColumns] = useState<FileColumnsState>({
-    macroeconomic: []
-  });
 
   const {
     currentStep,
@@ -66,46 +58,38 @@ export default function StressModelTabs() {
       {/* Step Content */}
       {currentStep === 0 && (
         <StressTestMethodTab
-        // onContinue={nextStep}
-        // onCreated={(id) => setOrderId(id)}
+
         />
       )}
 
       {currentStep === 1 && (
         <InputDataTab
-        // orderId={orderId}
-        // onContinue={handleFileDataContinue}
-        // onBack={prevStep}
+
         />
       )}
 
 
       {currentStep === 2 && (
         <InputScenarioTab
-        // onContinue={nextStep}
-        // onBack={prevStep}
+
         />
       )}
 
       {currentStep === 3 && (
         <SelectRiskTypeTab
-        // onContinue={nextStep}
-        // onBack={prevStep}
+
         />
       )}
 
       {currentStep === 4 && (
         <MacroSelectionTab
-          // onContinue={nextStep}
-          // onBack={prevStep}
+
         />
       )}
 
       {currentStep === 5 && (
         <InputParameterTab
-          onContinue={nextStep}
-          fileColumns={fileColumns}
-          onBack={prevStep}
+
         />
       )}
 

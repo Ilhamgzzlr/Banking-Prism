@@ -3,6 +3,7 @@ import {
   CustomMacroeconomicScenarios,
   MacroeconomicScenarioGenerator
 } from "../tabs/scenario-types";
+import { DEFAULT_SCENARIO_OPTIONS } from "../tabs/data/scenarioConfig";
 
 interface ScenarioRendererProps {
   scenarioType: string;
@@ -12,17 +13,32 @@ interface ScenarioRendererProps {
   onMacroLevelsChange?: (levels: any[]) => void;
 }
 
-const ScenarioRenderer = ({ 
-  scenarioType, 
+const ScenarioRenderer = ({
+  scenarioType,
   onRegulatoryFileChange,
   onCustomFileChange,
-  onMacroLevelsChange 
+  onMacroLevelsChange
 }: ScenarioRendererProps) => {
+
+  const scenarioConfig = DEFAULT_SCENARIO_OPTIONS.find(opt => opt.id === scenarioType);
+
   switch (scenarioType) {
     case "Regulatory Macroeconomic Scenarios":
-      return <RegulatoryMacroeconomicScenarios onFileChange={onRegulatoryFileChange} />;
+      return (
+        <RegulatoryMacroeconomicScenarios
+          onFileChange={onRegulatoryFileChange}
+          templatePath={scenarioConfig?.templatePath}
+          templateFileName={scenarioConfig?.templateFileName}
+        />
+      );
     case "Custom Macroeconomic Scenarios":
-      return <CustomMacroeconomicScenarios onCustomFileChange={onCustomFileChange} />;
+      return (
+        <CustomMacroeconomicScenarios
+          onCustomFileChange={onCustomFileChange}
+          templatePath={scenarioConfig?.templatePath}
+          templateFileName={scenarioConfig?.templateFileName}
+        />
+      );
     case "macroeconomic":
       return <MacroeconomicScenarioGenerator onLevelsChange={onMacroLevelsChange} />;
     default:

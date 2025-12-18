@@ -8,17 +8,8 @@ import {
 } from "../common";
 import { useFileUpload } from "./hooks/useFileUpload";
 import { TIME_HORIZON_OPTIONS, UPLOAD_CONFIG } from "./data/inputDataConfig";
-// import { uploadInputData } from "@/api/orders";
 import { useOrderStore } from "@/stores/useOrderStore";
 import { OrdersAPI } from "@/api/orders.api";
-
-
-// type Props = {
-//   orderId: number;
-//   onContinue: (fileColumns: { macroeconomic: string[] }) => void;
-//   onBack: () => void;
-// };
-
 
 export default function InputDataTab() {
   const { page2, savePageData, nextStep, prevStep, orderId } = useOrderStore();
@@ -49,18 +40,12 @@ export default function InputDataTab() {
     }
 
     try {
-      // await uploadInputData(orderId, {
-      //   time_horizon: timeHorizon,
-      //   stressTestingFile: files.stressTest,
-      //   macroFile: files.macroeconomic,
-      // });
       await OrdersAPI.savePage2(orderId, {
         time_horizon: timeHorizon,
         stressTestingFile: files.stressTest,
         macroFile: files.macroeconomic,
       });
 
-      // simpan metadata ke Zustand (BUKAN file)
       savePageData(2, {
         time_horizon: timeHorizon,
         stress_uploaded: true,
@@ -69,7 +54,7 @@ export default function InputDataTab() {
         stress_columns: fileColumns.stressTest
       });
 
-      nextStep(); // pakai Zustand, bukan props
+      nextStep();
     } catch (error) {
       console.error(error);
       alert("Failed to upload data");
@@ -86,7 +71,7 @@ export default function InputDataTab() {
   const isFormValid = files.stressTest && files.macroeconomic;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Time Horizon */}
       <HorizontalRadioGroup
         title="Time Horizon of Stress Testing Data"
@@ -98,7 +83,13 @@ export default function InputDataTab() {
       />
 
       {/* Stress Testing Data Input */}
-      <Section title="Stress Testing Data Input" required>
+      <Section
+        title="Stress Testing Data Input"
+        required
+        isDownloadTemplate
+        templatePath={UPLOAD_CONFIG.STRESS_TEST.templatePath}
+        templateFileName={UPLOAD_CONFIG.STRESS_TEST.templateFileName}
+      >
         <FileUploadSection
           title={UPLOAD_CONFIG.STRESS_TEST.title}
           acceptedTypes={UPLOAD_CONFIG.STRESS_TEST.acceptedTypes}
@@ -109,7 +100,13 @@ export default function InputDataTab() {
       </Section>
 
       {/* Macroeconomic Scenario Data Input */}
-      <Section title="Macroeconomic Scenario Data Input" required>
+      <Section
+        title="Macroeconomic Scenario Data Input"
+        required
+        isDownloadTemplate
+        templatePath={UPLOAD_CONFIG.MACROECONOMIC.templatePath}
+        templateFileName={UPLOAD_CONFIG.MACROECONOMIC.templateFileName}
+      >
         <FileUploadSection
           title={UPLOAD_CONFIG.MACROECONOMIC.title}
           acceptedTypes={UPLOAD_CONFIG.MACROECONOMIC.acceptedTypes}

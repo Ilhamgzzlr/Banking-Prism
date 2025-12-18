@@ -19,7 +19,7 @@ const ParameterInput = ({
   required = false,
   className = ""
 }: ParameterInputProps) => {
-  const inputType = type === "percentage" ? "text" : type;
+  const inputType = label === "RESID_MODE_PD" ? "text" : type === "percentage" ? "text" : type;
 
   return (
     <div>

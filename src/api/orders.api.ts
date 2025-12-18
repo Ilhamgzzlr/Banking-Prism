@@ -1,6 +1,7 @@
 // src/api/orders.api.ts
 import { http } from "./http";
 import type { Page5Macro } from "@/types/page5Macro";
+import type { Page6Params } from "@/types/page6";
 
 export const OrdersAPI = {
     createOrder: (payload: {
@@ -76,8 +77,43 @@ export const OrdersAPI = {
             .then(res => res.data),
 
 
-    savePage6: (orderId: number, payload: any) =>
-        http.put(`/orders/${orderId}/config/page6`, payload).then(res => res.data),
+    // src/api/orders.api.ts
+    savePage6: async (orderId: number, params: Page6Params) => {
+        // Buat payload tanpa file
+        const payload: any = {
+            init_params: params.init_params,
+            ead_config: params.ead_config,
+            npl_values: params.npl_values,
+            rwa_config: params.rwa_config,
+            lgd_config: {
+                lgd_mode: params.lgd_config.lgd_mode,
+                rr_value: params.lgd_config.rr_value,
+                related_macro_data: params.lgd_config.related_macro_data,
+                modelling_approach: params.lgd_config.modelling_approach
+            }
+        };
+
+        // Jika ada file, gunakan FormData
+        if (params.lgd_config.historical_data_file instanceof File) {
+            const formData = new FormData();
+
+            // Tambahkan JSON payload sebagai field 'data'
+            formData.append('data', JSON.stringify(payload));
+
+            // Tambahkan file
+            formData.append('historical_data_file', params.lgd_config.historical_data_file);
+
+            return http.put(`/orders/${orderId}/config/page6`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+        } else {
+            // Tidak ada file, kirim sebagai JSON biasa
+            return http.put(`/orders/${orderId}/config/page6`, payload, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+    },
+
 
     runCalculation: (orderId: number) =>
         http.post(`/orders/${orderId}/run`).then(res => res.data),
