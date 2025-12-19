@@ -1,4 +1,4 @@
-import { StressTestMethodTab, InputDataTab, InputScenarioTab, SelectRiskTypeTab, MacroSelectionTab, InputParameterTab, SelectModelTab, ResultTab } from "./tabs";
+import { StressTestMethodTab, InputDataTab, InputScenarioTab, SelectRiskTypeTab, MacroSelectionTab, InputParameterTab, ResultTab } from "./tabs";
 import { useOrderStore } from "@/stores/useOrderStore";
 
 const steps = [
@@ -16,8 +16,6 @@ export default function StressModelTabs() {
 
   const {
     currentStep,
-    nextStep,
-    prevStep,
     setStep,
   } = useOrderStore();
 
@@ -91,10 +89,6 @@ export default function StressModelTabs() {
 
         />
       )}
-
-      {/* {currentStep === 6 && (
-        <SelectModelTab onContinue={nextStep} onBack={prevStep} />
-      )} */}
 
       {currentStep === 6 && (
         <ResultTab />

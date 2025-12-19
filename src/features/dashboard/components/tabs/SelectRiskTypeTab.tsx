@@ -151,13 +151,11 @@ export default function SelectRiskTypeTab() {
         <h3 className="font-semibold mb-4 text-lg">
           {selectedRiskType} Configuration
         </h3>
-        <div className="border rounded-lg p-6 bg-white">
           <RiskTypeRenderer
             metrics={riskMetrics}
             riskType={selectedRiskType}
             onMetricsChange={handleRiskMetricsChange}
           />
-        </div>
       </div>
 
       {/* Action Buttons */}

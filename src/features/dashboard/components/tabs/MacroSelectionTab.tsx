@@ -120,7 +120,7 @@ export default function MacroSelectionTab() {
       >
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600">
-            Select macro factors to include in your stress testing analysis
+            Select macrofactors to include in your stress testing analysis
           </p>
           <div className="flex gap-3">
             <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">

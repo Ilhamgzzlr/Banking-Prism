@@ -87,8 +87,8 @@ export const useResults = () => {
     {
       id: "car",
       title: "Capital Adequacy Ratio (CAR)",
-      chartType: "bar",
-      dataKey: "coverage"
+      chartType: "line",
+      dataKey: "car"
     }
   ];
 

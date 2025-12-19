@@ -2,6 +2,7 @@ import { Download, Maximize2, Minimize2 } from "lucide-react";
 import { ExpandableSection, ResultsTable, ScenarioLineChart, ScenarioBarChart } from "../common";
 import { useResults } from "./hooks/useResults";
 import { TABLE_COLUMNS } from "./data/resultConfig";
+import { formatMetric, METRIC_CONFIG } from "@features/dashboard/utils/formatMetric";
 
 export default function ResultTab() {
     const {
@@ -72,40 +73,27 @@ export default function ResultTab() {
             </ExpandableSection>
 
             {/* Chart Sections */}
-            {chartSections.map((chart) => (
-                <ExpandableSection
-                    key={chart.id}
-                    title={chart.title}
-                    isExpanded={expandedSections[chart.id]}
-                    onToggle={() => toggleSection(chart.id)}
-                >
-                    <div className="p-4">
-                        {chart.id === "nplGross" && (
-                            <ScenarioLineChart
-                                data={chartData.nplGross}
-                                valueFormatter={(v) => `${(v * 100).toFixed(2)}%`}
-                            />
-                        )}
+            {chartSections.map((chart) => {
+                const metric = METRIC_CONFIG[chart.id as keyof typeof METRIC_CONFIG];
 
-                        {chart.id === "nplNet" && (
+                return (
+                    <ExpandableSection
+                        key={chart.id}
+                        title={metric.label}
+                        isExpanded={expandedSections[chart.id]}
+                        onToggle={() => toggleSection(chart.id)}
+                    >
+                        <div className="p-4">
                             <ScenarioLineChart
-                                data={chartData.nplNet}
-                                valueFormatter={(v) => `${(v * 100).toFixed(2)}%`}
+                                data={chartData[chart.id as keyof typeof chartData]}
+                                valueFormatter={(v) =>
+                                    formatMetric(v, metric.type, metric.decimals)
+                                }
                             />
-                        )}
-
-                        {chart.id === "car" && (
-                            // <ScenarioBarChart
-                            //     data={chartData.car}
-                            // />
-                            <ScenarioLineChart
-                                data={chartData.car}
-                                valueFormatter={(v) => `${(v * 100).toFixed(2)}%`}
-                            />
-                        )}
-                    </div>
-                </ExpandableSection>
-            ))}
+                        </div>
+                    </ExpandableSection>
+                );
+            })}
 
 
             {/* Action Buttons */}

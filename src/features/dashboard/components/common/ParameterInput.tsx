@@ -1,3 +1,14 @@
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
+import { cn } from "@/lib/utils"
+
 interface ParameterInputProps {
   label: string;
   name: string;
@@ -21,55 +32,42 @@ const ParameterInput = ({
   className = "",
   options
 }: ParameterInputProps) => {
-  const inputType = label === "RESID_MODE_PD" ? "text" : type === "percentage" ? "text" : type;
 
   return (
-    // <div>
-    //   <label className="block text-sm font-medium text-gray-900 mb-2">
-    //     {label} {required && <span className="text-red-500">*</span>}
-    //   </label>
-    //   <div className="relative">
-    //     <input
-    //       type={inputType}
-    //       name={name}
-    //       value={value}
-    //       onChange={(e) => onChange(e.target.value)}
-    //       className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${className}`}
-    //       placeholder={placeholder}
-    //     />
-    //   </div>
-    // </div>
-    <div>
-      <label className="block text-sm font-medium text-gray-900 mb-2">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-sm font-medium">
+        {label}
+        {required && <span className="ml-1 text-red-500">*</span>}
+      </Label>
 
       {options ? (
-        // ✅ DROPDOWN
-        <select
-          name={name}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className={`w-full px-4 py-2 border border-gray-300 rounded-md
-            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${className}`}
-        >
-          <option value="">Select {label}</option>
-          {options.map(opt => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        // ✅ SELECT (shadcn)
+        <Select value={value} onValueChange={onChange}>
+          <SelectTrigger id={name} className={className}>
+            <SelectValue placeholder={`Select ${label}`} />
+          </SelectTrigger>
+
+          <SelectContent>
+            {options.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       ) : (
-        // ✅ INPUT BIASA
-        <input
+        // ✅ INPUT (shadcn)
+        <Input
+          id={name}
           type={type === "percentage" ? "text" : type}
-          name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full px-4 py-2 border border-gray-300 rounded-md
-            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${className}`}
           placeholder={placeholder}
+          className={cn(
+            type === "number" &&
+            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+            className
+          )}
         />
       )}
     </div>

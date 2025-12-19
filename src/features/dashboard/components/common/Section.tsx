@@ -1,6 +1,7 @@
 import { Download } from "lucide-react";
 import { downloadTemplate } from "@features/dashboard/utils/downloadTemplate";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface SectionProps {
   title: string;
@@ -38,7 +39,6 @@ const Section = ({
     }
   };
 
-
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -46,14 +46,16 @@ const Section = ({
           {title} {required && <span className="text-red-500">*</span>}
         </h3>
         {isDownloadTemplate && templatePath && (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="default"
             onClick={handleDownload}
-            className="inline-flex items-center gap-2 px-4 h-10 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 mb-3"
+            className="mb-3"
           >
             <Download className="w-4 h-4" />
             Download Template
-          </button>
+          </Button>
         )}
       </div>
       {children}

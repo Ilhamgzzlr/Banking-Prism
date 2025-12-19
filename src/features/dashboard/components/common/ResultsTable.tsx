@@ -1,3 +1,13 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { cn } from "@/lib/utils"
+
 interface TableColumn {
   key: string;
   label: string;
@@ -23,7 +33,7 @@ const ResultsTable = ({
     if (column.format) {
       return column.format(value);
     }
-    
+
     // Format numeric values
     if (typeof value === 'number') {
       // Format percentages
@@ -40,55 +50,69 @@ const ResultsTable = ({
       // Format decimals
       return value.toFixed(4);
     }
-    
+
     return value;
   };
 
+  const alignClass = (align?: string) =>
+    align === "right"
+      ? "text-right"
+      : align === "center"
+        ? "text-center"
+        : "text-left"
+
   return (
-    <div className={`overflow-x-auto ${className}`}>
+    <div className={cn("overflow-x-auto space-y-2", className)}>
       {title && (
-        <div className="mb-3">
-          <h4 className="text-sm font-medium text-gray-700">{title}</h4>
-        </div>
+        <h4 className="text-sm font-medium text-muted-foreground">
+          {title}
+        </h4>
       )}
-      <table className="w-full text-xs border-collapse">
-        <thead>
-          <tr className="bg-gray-50">
+
+      <Table className="text-xs">
+        <TableHeader>
+          <TableRow className="bg-neutral-300 hover:bg-neutral-300">
             {columns.map((column) => (
-              <th
+              <TableHead
                 key={column.key}
-                className={`px-3 py-2 font-semibold text-gray-900 border border-gray-200 ${
-                  column.align === 'right' ? 'text-right' :
-                  column.align === 'center' ? 'text-center' : 'text-left'
-                }`}
+                className={cn(
+                  "font-semibold text-blue",
+                  alignClass(column.align)
+                )}
                 style={{ width: column.width }}
               >
                 {column.label}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
           {data.map((row, rowIndex) => (
-            <tr
+            <TableRow
               key={rowIndex}
-              className={rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"}
+              className={cn(
+                rowIndex % 2 === 0 ? "bg-background" : "bg-muted/30",
+                "hover:bg-muted"
+              )}
             >
               {columns.map((column) => (
-                <td
+                <TableCell
                   key={`${rowIndex}-${column.key}`}
-                  className={`px-3 py-2 border border-gray-200 ${
-                    column.align === 'right' ? 'text-right' :
-                    column.align === 'center' ? 'text-center' : 'text-left'
-                  } ${column.key.includes('scenario') ? 'font-medium' : 'text-gray-700'}`}
+                  className={cn(
+                    alignClass(column.align),
+                    column.key.includes("scenario")
+                      ? "font-medium"
+                      : "text-muted-foreground"
+                  )}
                 >
                   {formatValue(row[column.key], column)}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

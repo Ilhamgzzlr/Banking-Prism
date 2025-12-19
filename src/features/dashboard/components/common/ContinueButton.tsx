@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 interface ContinueButtonProps {
   onClick?: () => void;
   disabled?: boolean;
@@ -10,13 +12,13 @@ const ContinueButton = ({
   label = "Continue" 
 }: ContinueButtonProps) => {
   return (
-    <button 
-      className="px-4 py-2 bg-purple-600 text-white text-md font-medium transition-colors rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+    <Button
       onClick={onClick}
       disabled={disabled}
+      className="bg-purple-600 hover:bg-purple-700"
     >
       {label}
-    </button>
+    </Button>
   );
 };
 

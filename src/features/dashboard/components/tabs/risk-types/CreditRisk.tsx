@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface RiskMetric {
   name: string;
@@ -54,7 +57,6 @@ export default function CreditRisk({
     }
   }, [metrics]);
 
-
   const handleInputChange = (
     index: number,
     field: keyof Omit<RiskMetric, "name">,
@@ -85,94 +87,91 @@ export default function CreditRisk({
 
   return (
     <div className="space-y-6">
-
       {/* Risk Metrics */}
       <div className="space-y-4">
         {metrics.map((metric, index) => (
-          <div
-            key={index}
-            className="border border-gray-300 rounded-lg p-4 bg-white"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">
+          <Card key={index}>
+            <CardHeader>
+              <CardTitle className="text-base font-semibold">
                 {metric.name}
-              </h3>
-            </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Risk Limit */}
+                <div className="space-y-2">
+                  <Label htmlFor={`risk-limit-${index}`}>
+                    Risk Limit
+                  </Label>
+                  <Input
+                    id={`risk-limit-${index}`}
+                    type="number"
+                    value={metric.riskLimit}
+                    onChange={(e) =>
+                      handleValidatedInputChange(index, "riskLimit", e.target.value)
+                    }
+                    className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskLimit === "" ? "border-red-300" : ""}`}
+                    placeholder="e.g., 0.05"
+                    required
+                  />
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {/* Risk Limit */}
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Risk Limit
-                </label>
-                <input
-                  type="number"
-                  value={metric.riskLimit}
-                  onChange={(e) =>
-                    handleValidatedInputChange(index, "riskLimit", e.target.value)
-                  }
-                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${metric.riskLimit === "" ? "border-red-300" : "border-gray-300"
-                    }`}
-                  placeholder="e.g., 0.05"
-                  required
-                />
-              </div>
+                {/* Risk Tolerance */}
+                <div className="space-y-2">
+                  <Label htmlFor={`risk-tolerance-${index}`}>
+                    Risk Tolerance
+                  </Label>
+                  <Input
+                    id={`risk-tolerance-${index}`}
+                    type="number"
+                    value={metric.riskTolerance}
+                    onChange={(e) =>
+                      handleValidatedInputChange(index, "riskTolerance", e.target.value)
+                    }
+                    className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskTolerance === "" ? "border-red-300" : ""}`}
+                    placeholder="e.g., 0.05"
+                    required
+                  />
+                </div>
 
-              {/* Risk Tolerance */}
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Risk Tolerance
-                </label>
-                <input
-                  type="number"
-                  value={metric.riskTolerance}
-                  onChange={(e) =>
-                    handleValidatedInputChange(index, "riskTolerance", e.target.value)
-                  }
-                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${metric.riskAppetite === "" ? "border-red-300" : "border-gray-300"
-                    }`}
-                  placeholder="e.g., 0.05"
-                  required
-                />
-              </div>
+                {/* Risk Appetite */}
+                <div className="space-y-2">
+                  <Label htmlFor={`risk-appetite-${index}`}>
+                    Risk Appetite
+                  </Label>
+                  <Input
+                    id={`risk-appetite-${index}`}
+                    type="number"
+                    value={metric.riskAppetite}
+                    onChange={(e) =>
+                      handleValidatedInputChange(index, "riskAppetite", e.target.value)
+                    }
+                    className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskAppetite === "" ? "border-red-300" : ""}`}
+                    placeholder="e.g., 0.05"
+                    required
+                  />
+                </div>
 
-              {/* Risk Appetite */}
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Risk Appetite
-                </label>
-                <input
-                  type="number"
-                  value={metric.riskAppetite}
-                  onChange={(e) =>
-                    handleValidatedInputChange(index, "riskAppetite", e.target.value)
-                  }
-                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${metric.riskAppetite === "" ? "border-red-300" : "border-gray-300"
-                    }`}
-                  placeholder="e.g., 0.05"
-                  required
-                />
+                {/* Risk Capacity */}
+                <div className="space-y-2">
+                  <Label htmlFor={`risk-capacity-${index}`}>
+                    Risk Capacity
+                  </Label>
+                  <Input
+                    id={`risk-capacity-${index}`}
+                    type="number"
+                    value={metric.riskCapacity}
+                    onChange={(e) =>
+                      handleValidatedInputChange(index, "riskCapacity", e.target.value)
+                    }
+                    className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskCapacity === "" ? "border-red-300" : ""}`}
+                    placeholder="e.g., 0.05"
+                    required
+                  />
+                </div>
               </div>
-
-              {/* Risk Capacity */}
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">
-                  Risk Capacity
-                </label>
-                <input
-                  type="number"
-                  value={metric.riskCapacity}
-                  onChange={(e) =>
-                    handleValidatedInputChange(index, "riskCapacity", e.target.value)
-                  }
-                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none ${metric.riskCapacity === "" ? "border-red-300" : "border-gray-300"
-                    }`}
-                  placeholder="e.g., 0.05"
-                  required
-                />
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

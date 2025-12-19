@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 interface BackButtonProps {
   onClick?: () => void;
   disabled?: boolean;
@@ -10,13 +12,13 @@ const BackButton = ({
   label = "Back",
 }: BackButtonProps) => {
   return (
-    <button
-      className="px-4 py-2 text-gray-800 rounded-md hover:bg-[#F1f5f9] border border-[#E2e8f0] text-md font-medium transition-colors"
+    <Button
+      variant="outline"
       onClick={onClick}
       disabled={disabled}
     >
       {label}
-    </button>
+    </Button>
   );
 };
 

@@ -1,5 +1,6 @@
 import Sidebar from "@components/Sidebar/Sidebar";
-import Breadcrumb from "@components/Breadcrumb/Breadcrumb";
+import AppBreadcrumb from "@components/Breadcrumb/Breadcrumb";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,10 +13,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           {/* Top Bar */}
           <div className="flex items-center justify-end h-20">
             <div className="flex items-center gap-4 bg-gray-300 h-full pr-16 pl-4">
-              <img
-                src="https://i.pravatar.cc/40"
-                className="w-12 h-12 rounded-full"
-              />
+              <Avatar className="h-12 w-12">
+                <AvatarImage src="https://i.pravatar.cc/40" />
+                <AvatarFallback>FN</AvatarFallback>
+              </Avatar>
+
               <div className="text-left">
                 <p className="text-sm font-medium text-gray-800">
                   Full Name
@@ -33,7 +35,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               Stress Testing Model
             </h1>
 
-            <Breadcrumb />
+            <AppBreadcrumb />
           </div>
         </header>
 

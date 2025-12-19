@@ -5,7 +5,8 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  CartesianGrid
 } from "recharts";
 
 type Props = {
@@ -36,26 +37,76 @@ export default function ScenarioLineChart({ data, valueFormatter }: Props) {
     <div className="w-full h-[420px]">
       <ResponsiveContainer>
         <LineChart data={data}>
-          <XAxis dataKey="Date" tick={{ fontSize: 12 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+
+          <XAxis
+            dataKey="Date"
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+            axisLine={false}
+            tickLine={false}
+          />
 
           <YAxis
             domain={[min - padding, max + padding]}
             tickFormatter={valueFormatter}
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+            axisLine={false}
+            tickLine={false}
             tickCount={6}
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              fontSize: "12px"
+            }}
+            labelStyle={{ fontWeight: 600 }}
             formatter={(v: number | undefined) =>
               v !== undefined && valueFormatter ? valueFormatter(v) : v
             }
           />
-          <Legend />
 
-          <Line type="monotone" dataKey="Baseline" stroke="#2563eb" strokeWidth={2} dot={false} />
-          <Line type="monotone" dataKey="Adverse1" stroke="#dc2626" strokeWidth={2} dot={false} />
-          <Line type="monotone" dataKey="Adverse2" stroke="#ea580c" strokeWidth={2} dot={false} />
+          <Legend
+            verticalAlign="top"
+            align="right"
+            iconType="circle"
+            iconSize={8}
+            wrapperStyle={{ fontSize: "12px", paddingBottom: 16 }}
+          />
+
+          <Line
+            type="monotone"
+            dataKey="Baseline"
+            stroke="#2563eb"
+            strokeWidth={2.5}
+            dot={false}
+            activeDot={{ r: 4 }}
+            strokeLinecap="round"
+          />
+          <Line
+            type="monotone"
+            dataKey="Adverse1"
+            stroke="#dc2626"
+            strokeWidth={2.5}
+            dot={false}
+            activeDot={{ r: 4 }}
+            strokeLinecap="round"
+          />
+          <Line
+            type="monotone"
+            dataKey="Adverse2"
+            stroke="#ea580c"
+            strokeWidth={2.5}
+            dot={false}
+            activeDot={{ r: 4 }}
+            strokeLinecap="round"
+          />
         </LineChart>
       </ResponsiveContainer>
+
     </div>
   );
 }
