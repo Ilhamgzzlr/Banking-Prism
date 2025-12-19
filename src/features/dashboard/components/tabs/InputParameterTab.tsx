@@ -1,4 +1,4 @@
-import { Section, InfoTooltip, LGDOption, GrowthAssumptionOption, ParameterSection, ContinueButton, BackButton } from "../common";
+import { Section, InfoTooltip, LGDOption, GrowthAssumptionOption, ParameterSection, ContinueButton, BackButton, SelectModelPopup } from "../common";
 import { useParameters } from "./hooks/useParameters";
 import {
   INITIALIZATION_PARAMETERS,
@@ -7,15 +7,8 @@ import {
   LOAN_SEGMENTS
 } from "./data/parameterConfig";
 import { useOrderStore } from "@/stores/useOrderStore";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { OrdersAPI } from "@/api/orders.api";
-
-// type Props = {
-//   onContinue: () => void;
-//   fileColumns?: { macroeconomic: string[] };
-//   onBack: () => void;
-// };
-
 
 export default function InputParameterTab() {
   const {
@@ -55,7 +48,7 @@ export default function InputParameterTab() {
     ead_column: segment,
     value: Number(parameters[`exposure_${segment}`]),
     elasticity_value:
-      parameters.ead_growth_assumption === "gdp"
+      parameters.ead_growth_assumption === "gdp" || parameters.ead_growth_assumption === "manual"
         ? Number(parameters[`ead_${segment}`])
         : undefined,
   }));
@@ -164,10 +157,30 @@ export default function InputParameterTab() {
   };
 
   // Prepare parameter sections data
-  const initializationParams = INITIALIZATION_PARAMETERS.map(param => ({
-    ...param,
-    value: parameters[param.id as keyof typeof parameters] as string
-  }));
+  // const initializationParams = INITIALIZATION_PARAMETERS.map(param => ({
+  //   ...param,
+  //   value: parameters[param.id as keyof typeof parameters] as string
+  // }));
+
+  const initializationParams = INITIALIZATION_PARAMETERS.map(param => {
+    if (param.id === "resid_mode_pd") {
+      return {
+        ...param,
+        value: parameters.resid_mode_pd,
+        options: [
+          { label: "Normal", value: "Normal" },
+          { label: "Bootstrapping", value: "Bootstrapping" },
+          { label: "Fitted", value: "Fitted" },
+        ]
+      };
+    }
+
+    return {
+      ...param,
+      value: parameters[param.id as keyof typeof parameters] as string
+    };
+  });
+
 
   const exposureParams = LOAN_SEGMENTS.map(segment => ({
     id: `exposure_${segment}`,
@@ -205,7 +218,37 @@ export default function InputParameterTab() {
     { id: "rwa_operational", label: "Operational RWA", value: parameters.rwa_operational, placeholder: "e.g., 50000" }
   ];
 
-  // const gdpColumnOptions = fileColumns?.macroeconomic || [];
+  const [openSelectModel, setOpenSelectModel] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+
+  const handleRrModellingApproachChange = (approach: "auto" | "custom") => {
+    updateParameter("rr_modelling_approach", approach);
+
+    if (approach === "custom") {
+      setOpenSelectModel(true);
+    }
+  };
+
+  const handleLgdModellingApproachChange = (approach: "auto" | "custom") => {
+    updateParameter("lgd_modelling_approach", approach);
+
+    if (approach === "custom") {
+      setOpenSelectModel(true);
+    }
+  };
+
+  const handleConfirmModel = (model: { id: string; name: string }) => {
+    setSelectedModel(model);
+
+    // OPTIONAL: simpan ke parameters agar ikut ke payload
+    // updateParameter("selected_model_id", model.id);
+  };
+
+
 
   return (
     <div className="space-y-8">
@@ -341,17 +384,25 @@ export default function InputParameterTab() {
               rrMacroColumn={parameters.rr_macro_column}
               onRrMacroColumnChange={(value) => updateParameter("rr_macro_column", value)}
               rrModellingApproach={parameters.rr_modelling_approach}
-              onRrModellingApproachChange={(approach) => updateParameter("rr_modelling_approach", approach)}
+              onRrModellingApproachChange={handleRrModellingApproachChange}
               lgdFile={parameters.lgd_file}
               onLgdFileChange={(file) => handleFileChange("lgd_file", file)}
               lgdMacroColumn={parameters.lgd_macro_column}
               onLgdMacroColumnChange={(value) => updateParameter("lgd_macro_column", value)}
               lgdModellingApproach={parameters.lgd_modelling_approach}
-              onLgdModellingApproachChange={(approach) => updateParameter("lgd_modelling_approach", approach)}
+              onLgdModellingApproachChange={handleLgdModellingApproachChange}
+              selectedModel={selectedModel}
             />
           ))}
         </div>
       </Section>
+
+      <SelectModelPopup
+        open={openSelectModel}
+        onOpenChange={setOpenSelectModel}
+        onConfirm={handleConfirmModel}
+      />
+
 
       {/* Action Buttons */}
       <div className="flex justify-between gap-3 pt-4">

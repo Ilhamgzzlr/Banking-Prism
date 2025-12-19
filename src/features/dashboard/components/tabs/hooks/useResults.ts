@@ -40,12 +40,12 @@ export const useResults = () => {
     if (!orderId) return;
 
     // already in store → reuse
-    if (pageResult?.rawResult) {
-      setTableData(
-        mapResultTable(pageResult.rawResult.results_table_data)
-      );
-      return;
-    }
+    // if (pageResult?.rawResult) {
+    //   setTableData(
+    //     mapResultTable(pageResult.rawResult.results_table_data)
+    //   );
+    //   return;
+    // }
 
     const fetchResult = async () => {
       try {

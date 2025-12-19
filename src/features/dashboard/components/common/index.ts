@@ -24,4 +24,5 @@ export { default as ScenarioBarChart } from './ScenarioBarChart';
 export { default as ResultsTable } from './ResultsTable';
 export { default as BackButton } from './BackButton';
 export { default as MacroeconomicInfoModal } from './MacroeconomicInfoModal';
+export { default as SelectModelPopup } from './SelectModelPopup';
 

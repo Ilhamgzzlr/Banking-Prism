@@ -1,5 +1,6 @@
 import { Download } from "lucide-react";
 import { downloadTemplate } from "@features/dashboard/utils/downloadTemplate";
+import { toast } from "sonner";
 
 interface SectionProps {
   title: string;
@@ -20,10 +21,23 @@ const Section = ({
 }: SectionProps) => {
 
   const handleDownload = () => {
-    if (templatePath && templateFileName) {
+    if (!templatePath || !templateFileName) {
+      toast.error("Template not available");
+      return;
+    }
+
+    try {
       downloadTemplate(templatePath, templateFileName);
+
+      toast.success("Template downloaded", {
+        description: templateFileName,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to download template");
     }
   };
+
 
   return (
     <div>
@@ -31,7 +45,7 @@ const Section = ({
         <h3 className="font-semibold mb-3">
           {title} {required && <span className="text-red-500">*</span>}
         </h3>
-        {isDownloadTemplate && templatePath  && (
+        {isDownloadTemplate && templatePath && (
           <button
             type="button"
             onClick={handleDownload}

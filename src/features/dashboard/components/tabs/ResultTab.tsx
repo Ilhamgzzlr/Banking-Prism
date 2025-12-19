@@ -95,8 +95,12 @@ export default function ResultTab() {
                         )}
 
                         {chart.id === "car" && (
-                            <ScenarioBarChart
+                            // <ScenarioBarChart
+                            //     data={chartData.car}
+                            // />
+                            <ScenarioLineChart
                                 data={chartData.car}
+                                valueFormatter={(v) => `${(v * 100).toFixed(2)}%`}
                             />
                         )}
                     </div>

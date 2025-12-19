@@ -5,11 +5,11 @@ interface LGDOptionProps {
   label: string;
   isSelected: boolean;
   onSelect: () => void;
-  
+
   // RR specific
   rrValue?: string;
   onRrValueChange?: (value: string) => void;
-  
+
   // Modelling RR specific
   rrFile?: File | null;
   onRrFileChange?: (file: File | null) => void;
@@ -17,7 +17,7 @@ interface LGDOptionProps {
   onRrMacroColumnChange?: (value: string) => void;
   rrModellingApproach?: "auto" | "custom";
   onRrModellingApproachChange?: (approach: "auto" | "custom") => void;
-  
+
   // Modelling LGD specific
   lgdFile?: File | null;
   onLgdFileChange?: (file: File | null) => void;
@@ -25,6 +25,12 @@ interface LGDOptionProps {
   onLgdMacroColumnChange?: (value: string) => void;
   lgdModellingApproach?: "auto" | "custom";
   onLgdModellingApproachChange?: (approach: "auto" | "custom") => void;
+
+  selectedModel?: {
+    id: string;
+    name: string;
+  } | null;
+
 }
 
 const LGDOption = ({
@@ -45,7 +51,8 @@ const LGDOption = ({
   lgdMacroColumn,
   onLgdMacroColumnChange,
   lgdModellingApproach,
-  onLgdModellingApproachChange
+  onLgdModellingApproachChange,
+  selectedModel
 }: LGDOptionProps) => {
   return (
     <div className="space-y-2 border-b pb-4 last:border-b-0">
@@ -66,7 +73,7 @@ const LGDOption = ({
           {method === "rr" && isSelected && onRrValueChange && (
             <div className="mt-3">
               <ParameterInput
-                label="Recovery Rate Value"
+                label="Loss Given Default Value"
                 name="rr_value"
                 value={rrValue || ""}
                 onChange={onRrValueChange}
@@ -82,7 +89,7 @@ const LGDOption = ({
               {/* Upload Historical RR Data */}
               <SimpleFileUpload
                 label="Upload Historical RR Data"
-                onFileSelect={onRrFileChange || (() => {})}
+                onFileSelect={onRrFileChange || (() => { })}
                 selectedFile={rrFile || null}
                 accept=".xlsx,.xls,.csv"
               />
@@ -132,6 +139,13 @@ const LGDOption = ({
                       />
                       <span className="text-sm text-gray-700">Custom</span>
                     </label>
+                    {selectedModel && (
+                      <div className="rounded-md bg-blue-50 border border-blue-200 px-3 py-2 text-sm text-blue-800">
+                        <span className="font-medium">Selected Model:</span>{" "}
+                        {selectedModel.name}
+                      </div>
+                    )}
+
                   </div>
                 </div>
               )}
@@ -144,7 +158,7 @@ const LGDOption = ({
               {/* Upload Historical LGD Data */}
               <SimpleFileUpload
                 label="Upload Historical LGD Data"
-                onFileSelect={onLgdFileChange || (() => {})}
+                onFileSelect={onLgdFileChange || (() => { })}
                 selectedFile={lgdFile || null}
                 accept=".xlsx,.xls,.csv"
               />
@@ -194,6 +208,13 @@ const LGDOption = ({
                       />
                       <span className="text-sm text-gray-700">Custom</span>
                     </label>
+                    {selectedModel && (
+                      <div className="rounded-md bg-blue-50 border border-blue-200 px-3 py-2 text-sm text-blue-800">
+                        <span className="font-medium">Selected Model:</span>{" "}
+                        {selectedModel.name}
+                      </div>
+                    )}
+
                   </div>
                 </div>
               )}

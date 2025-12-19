@@ -7,6 +7,7 @@ interface ParameterSectionProps {
     label: string;
     value: string;
     placeholder?: string;
+    options?: { label: string; value: string }[];
   }>;
   onParameterChange: (id: string, value: string) => void;
   columns?: 1 | 2 | 3 | 4;
@@ -43,6 +44,7 @@ const ParameterSection = ({
             onChange={(value) => onParameterChange(param.id, value)}
             placeholder={param.placeholder}
             required={required}
+            options={param.options}
           />
         ))}
       </div>
