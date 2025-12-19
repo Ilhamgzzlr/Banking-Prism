@@ -30,7 +30,7 @@ export const GROWTH_ASSUMPTION_OPTIONS = [
 export const LGD_METHODS = [
   {
     value: "rr" as const,
-    label: "RR (Recovery Rate)",
+    label: "Lost Given Default",
   },
   {
     value: "modelling_rr" as const,

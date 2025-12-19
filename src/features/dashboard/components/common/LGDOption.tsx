@@ -66,7 +66,7 @@ const LGDOption = ({
           {method === "rr" && isSelected && onRrValueChange && (
             <div className="mt-3">
               <ParameterInput
-                label="Recovery Rate Value"
+                label="Loss Given Default Value"
                 name="rr_value"
                 value={rrValue || ""}
                 onChange={onRrValueChange}

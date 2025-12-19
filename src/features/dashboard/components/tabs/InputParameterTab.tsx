@@ -37,10 +37,24 @@ export default function InputParameterTab({ onContinue, onBack, fileColumns }: P
   }
 
   // Prepare parameter sections data
-  const initializationParams = INITIALIZATION_PARAMETERS.map(param => ({
-    ...param,
-    value: parameters[param.id as keyof typeof parameters] as string
-  }));
+  const initializationParams = INITIALIZATION_PARAMETERS.map(param => {
+    if (param.id === "resid_mode_pd") {
+      return {
+        ...param,
+        value: parameters.resid_mode_pd,
+        options: [
+          { label: "Normal", value: "Normal" },
+          { label: "Bootstrapping", value: "Bootstrapping" },
+          { label: "Fitted", value: "Fitted" },
+        ]
+      };
+    }
+
+    return {
+      ...param,
+      value: parameters[param.id as keyof typeof parameters] as string
+    };
+  });
 
   const exposureParams = LOAN_SEGMENTS.map(segment => ({
     id: `exposure_${segment}`,
