@@ -5,10 +5,10 @@ import { OrdersAPI } from "@/api/orders.api";
 import { useEffect, useState } from "react";
 
 
-type Props = {
-  onContinue: () => void;
-  onBack: () => void;
-};
+// type Props = {
+//   onContinue: () => void;
+//   onBack: () => void;
+// };
 
 
 export default function SelectRiskTypeTab() {
@@ -25,7 +25,6 @@ export default function SelectRiskTypeTab() {
     riskTypeOptions,
     handleRiskTypeChange,
     isRiskTypeEnabled,
-    setSelectedRiskType,
   } = useRiskTypeSelection(
     page4?.risk_type ?? "Credit Risk"
   );

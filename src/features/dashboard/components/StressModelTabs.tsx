@@ -20,7 +20,7 @@ interface FileColumnsState {
 
 export default function StressModelTabs() {
   // const [currentStep, setCurrentStep] = useState(0);
-  const [fileColumns, setFileColumns] = useState<FileColumnsState>({
+  const [fileColumns] = useState<FileColumnsState>({
     macroeconomic: []
   });
 

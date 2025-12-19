@@ -21,7 +21,7 @@ const ParameterInput = ({
   className = "",
   options
 }: ParameterInputProps) => {
-  const inputType = type === "percentage" ? "text" : type;
+  // const inputType = type === "percentage" ? "text" : type;
 
   return (
     <div>
