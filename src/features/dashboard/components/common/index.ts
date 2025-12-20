@@ -25,4 +25,5 @@ export { default as ResultsTable } from './ResultsTable';
 export { default as BackButton } from './BackButton';
 export { default as MacroeconomicInfoModal } from './MacroeconomicInfoModal';
 export { default as SelectModelPopup } from './SelectModelPopup';
+export { default as ResultLoading } from './ResultLoading';
 

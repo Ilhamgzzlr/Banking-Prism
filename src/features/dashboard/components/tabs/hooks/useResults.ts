@@ -25,9 +25,17 @@ export interface ChartSection {
 }
 
 export const useResults = () => {
-  const { orderId, pageResult, saveResult } = useOrderStore();
+  const {
+    orderId,
+    pageResult,
+    saveResult,
+    calculationStatus,
+    setCalculationStatus,
+    reset: resetStore,
+  } = useOrderStore();
 
   const [tableData, setTableData] = useState<TableData[]>([]);
+  const [isCalculating, setIsCalculating] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     table: true,
     nplGross: false,
@@ -40,27 +48,45 @@ export const useResults = () => {
     if (!orderId) return;
 
     // already in store → reuse
-    // if (pageResult?.rawResult) {
-    //   setTableData(
-    //     mapResultTable(pageResult.rawResult.results_table_data)
-    //   );
-    //   return;
-    // }
+    if (pageResult?.rawResult) {
+      setTableData(
+        mapResultTable(pageResult.rawResult.results_table_data)
+      );
+      return;
+    }
 
-    const fetchResult = async () => {
+    const fetchResultOnly = async () => {
+      const res = await OrdersAPI.getResult(orderId);
+      saveResult(res.data);
+      setTableData(
+        mapResultTable(res.data.results_table_data)
+      );
+    };
+
+    const runAndFetch = async () => {
       try {
-        const res = await OrdersAPI.getResult(orderId);
-        saveResult(res.data);
+        setIsCalculating(true);
+        setCalculationStatus("RUNNING");
 
-        setTableData(
-          mapResultTable(res.data.results_table_data)
-        );
-      } catch (e) {
-        console.error("Failed to fetch result", e);
+        await OrdersAPI.runCalculation(orderId);
+        await fetchResultOnly();
+      } catch (err) {
+        console.error("Calculation failed", err);
+        setCalculationStatus("NOT_STARTED");
+      } finally {
+        setIsCalculating(false);
       }
     };
 
-    fetchResult();
+    // 2️⃣ logic utama
+    if (calculationStatus === "DONE") {
+      fetchResultOnly();
+    } else if (calculationStatus === "NOT_STARTED") {
+      runAndFetch();
+    } else if (calculationStatus === "RUNNING") {
+      // optional: polling status backend
+      setIsCalculating(true);
+    }
   }, [orderId]);
 
   const chartData = {
@@ -69,7 +95,7 @@ export const useResults = () => {
     car: pageResult?.rawResult?.car_series || [],
   };
 
-  
+
 
   const chartSections: ChartSection[] = [
     {
@@ -133,14 +159,35 @@ export const useResults = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleCreateNewTest = () => {
+    // Konfirmasi dengan user
+    if (window.confirm("Are you sure you want to create a new test? All current data will be reset.")) {
+      // Reset store
+      resetStore();
+
+      // Reset local state
+      setTableData([]);
+      setExpandedSections({
+        table: true,
+        nplGross: false,
+        nplNet: false,
+        car: false,
+        summary: false
+      });
+    }
+  };
+
+
   return {
     tableData,
     chartData,
+    isCalculating,
     expandedSections,
     chartSections,
     toggleSection,
     expandAll,
     collapseAll,
     downloadTableCSV,
+    handleCreateNewTest
   };
 };

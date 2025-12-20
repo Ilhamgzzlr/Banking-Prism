@@ -10,6 +10,8 @@ interface OrderState {
     currentStep: number;
     status: string;
 
+    calculationStatus?: "NOT_STARTED" | "RUNNING" | "DONE";
+
     page1?: any;
     page2?: any;
     page3?: {
@@ -39,6 +41,7 @@ interface OrderState {
     nextStep: () => void;
     prevStep: () => void;
 
+    setCalculationStatus: (status: "NOT_STARTED" | "RUNNING" | "DONE") => void;
     savePageData: (page: number, data: any) => void;
     saveResult: (result: OrderResultResponse) => void;
     reset: () => void;
@@ -50,6 +53,11 @@ export const useOrderStore = create<OrderState>()(
             orderId: null,
             currentStep: 0,
             status: "Draft",
+
+            calculationStatus: "NOT_STARTED",
+
+            setCalculationStatus: (status) =>
+                set({ calculationStatus: status }),
 
             setOrderId: (id) => set({ orderId: id }),
             setStep: (step) => set({ currentStep: step }),
@@ -64,8 +72,8 @@ export const useOrderStore = create<OrderState>()(
                     [`page${page}`]: data,
                 })),
 
-            saveResult: (result: OrderResultResponse) => 
-                set((state) => ({
+            saveResult: (result: OrderResultResponse) =>
+                set(() => ({
                     pageResult: { rawResult: result }
                 })),
 
@@ -74,12 +82,14 @@ export const useOrderStore = create<OrderState>()(
                     orderId: null,
                     currentStep: 0,
                     status: "Draft",
+                    calculationStatus: "NOT_STARTED",
                     page1: undefined,
                     page2: undefined,
                     page3: undefined,
                     page4: undefined,
                     page5: undefined,
                     page6: undefined,
+                    pageResult: undefined,
                 }),
         }),
         {

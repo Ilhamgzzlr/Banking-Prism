@@ -143,7 +143,7 @@ export default function InputParameterTab() {
 
       savePageData(6, { parameters });
 
-      await OrdersAPI.runCalculation(orderId);
+      // await OrdersAPI.runCalculation(orderId);
       nextStep();
     } catch (e) {
       console.error(e);
