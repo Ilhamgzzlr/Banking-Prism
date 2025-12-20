@@ -37,6 +37,7 @@ export default function StressTestMethodTab() {
     };
 
     // if (!orderId) {
+    
       const order = await OrdersAPI.createOrder(payload);
       setOrderId(order.order_id);
     // }
