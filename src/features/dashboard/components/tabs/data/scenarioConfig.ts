@@ -5,14 +5,14 @@ export const DEFAULT_SCENARIO_OPTIONS: ScenarioOption[] = [
     id: "Regulatory Macroeconomic Scenarios",
     label: "Regulatory Macroeconomic Scenarios",
     description: "Use predefined Regulatory Macroeconomic Scenarios stress testing scenarios with official parameters",
-    templatePath: "/src/templates/template_regulatory_scenario.xlsx",
+    templatePath: "/templates/template_regulatory_scenario.xlsx",
     templateFileName: "template_regulatory_scenario.xlsx"
   },
   {
     id: "Custom Macroeconomic Scenarios",
     label: "Custom Macroeconomic Scenarios",
     description: "Upload your own custom scenario data in Excel or CSV format",
-    templatePath: "/src/templates/template_custom_scenario.xlsx",
+    templatePath: "/templates/template_custom_scenario.xlsx",
     templateFileName: "template_custom_scenario.xlsx"
   },
   {
