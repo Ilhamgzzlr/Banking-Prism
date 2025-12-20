@@ -10,11 +10,9 @@ interface FileUploadSectionProps {
 }
 
 const FileUploadSection = ({
-  title,
   acceptedTypes = ".xlsx,.xls,.csv",
   onFileSelect,
   selectedFile,
-  required = false
 }: FileUploadSectionProps) => {
   const [isDragging, setIsDragging] = useState(false);
 

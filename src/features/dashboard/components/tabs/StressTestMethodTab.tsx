@@ -8,7 +8,7 @@ export type ScenarioType = "static" | "dynamic";
 export type AnalysisMethod = "Scenario Analysis" | "Sensitivity Analysis" | "Comprehensive Run";
 
 export default function StressTestMethodTab() {
-  const { orderId, setOrderId, nextStep, savePageData, page1 } = useOrderStore();
+  const { setOrderId, nextStep, savePageData, page1 } = useOrderStore();
 
   const [selectedScenario, setSelectedScenario] = useState(
     page1?.economic_scenario ?? null
