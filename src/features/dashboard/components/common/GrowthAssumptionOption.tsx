@@ -23,7 +23,7 @@ const GrowthAssumptionOption = ({
           name="ead_growth"
           checked={isSelected}
           onChange={() => onSelect(value)}
-          className="w-4 h-4 text-blue-600"
+          className="accent-purple-600 size-4"
         />
         <span className="text-sm text-gray-700">{label}</span>
         <InfoTooltip content={description} position="right" />

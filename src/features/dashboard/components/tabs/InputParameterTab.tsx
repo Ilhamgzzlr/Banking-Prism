@@ -9,6 +9,14 @@ import {
 import { useOrderStore } from "@/stores/useOrderStore";
 import { useState, useEffect } from "react";
 import { OrdersAPI } from "@/api/orders.api";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 
 export default function InputParameterTab() {
   const {
@@ -295,27 +303,41 @@ export default function InputParameterTab() {
                     <label className="block text-sm font-medium text-gray-900 mb-2">
                       GDP Column Name
                     </label>
-                    <select
-                      value={parameters.gdp_column}
-                      onChange={(e) => updateParameter("gdp_column", e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    <Select
+                      value={parameters.gdp_column || ""}
+                      onValueChange={(value) =>
+                        updateParameter("gdp_column", value)
+                      }
                     >
-                      <option value="">Select GDP column...</option>
-                      {gdpColumnOptions.length > 0 ? (
-                        gdpColumnOptions.slice(1).map((column: any) => (
-                          <option key={column} value={column}>
-                            {column}
-                          </option>
-                        ))
-                      ) : (
-                        <>
-                          <option value="gdp_growth">GDP Growth Rate</option>
-                          <option value="gdp_nominal">Nominal GDP</option>
-                          <option value="gdp_real">Real GDP</option>
-                          <option value="gdp_per_capita">GDP per Capita</option>
-                        </>
-                      )}
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select GDP column..." />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        {gdpColumnOptions.length > 0 ? (
+                          gdpColumnOptions.slice(1).map((column: any) => (
+                            <SelectItem key={column} value={column}>
+                              {column}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <>
+                            <SelectItem value="gdp_growth">
+                              GDP Growth Rate
+                            </SelectItem>
+                            <SelectItem value="gdp_nominal">
+                              Nominal GDP
+                            </SelectItem>
+                            <SelectItem value="gdp_real">
+                              Real GDP
+                            </SelectItem>
+                            <SelectItem value="gdp_per_capita">
+                              GDP per Capita
+                            </SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Elasticity Tooltip */}

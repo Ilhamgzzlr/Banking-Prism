@@ -3,6 +3,18 @@ import { ExpandableSection, ResultsTable, ScenarioLineChart, ResultLoading } fro
 import { useResults } from "./hooks/useResults";
 import { TABLE_COLUMNS } from "./data/resultConfig";
 import { formatMetric, METRIC_CONFIG } from "@features/dashboard/utils/formatMetric";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+
 
 export default function ResultTab() {
     const {
@@ -102,16 +114,41 @@ export default function ResultTab() {
 
             {/* Action Buttons */}
             <div className="flex justify-between items-center pt-4 border-t">
-                <div>
-                    <button
-                        onClick={handleCreateNewTest}
-                        className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                        type="button"
-                    >
-                        {/* <Plus className="w-4 h-4" /> */}
-                        Create New Test
-                    </button>
-                </div>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <button
+                            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                            type="button"
+                        >
+                            Create New Test
+                        </button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Create New Test?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action will reset all current results and charts.
+                                This cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>
+                                Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={handleCreateNewTest}
+                                className="bg-purple-600 hover:bg-purple-700"
+                            >
+                                Yes, Create New Test
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
                 <div className="flex gap-3">
                     <button
                         onClick={handleExportResults}

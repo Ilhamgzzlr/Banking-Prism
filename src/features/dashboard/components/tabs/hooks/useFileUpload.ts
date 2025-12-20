@@ -41,7 +41,11 @@ export const useFileUpload = (
    * HANDLE FILE SELECT
    */
   const handleFileSelect = async (type: keyof FileUploadState, file: File | null) => {
-    if (!file) return;
+    if (!file) {
+      setFiles(prev => ({ ...prev, [type]: null }));
+      setFileColumns(prev => ({ ...prev, [type]: [] }));
+      return;
+    }
 
     let columns: string[] = [];
 

@@ -62,7 +62,7 @@ const LGDOption = ({
           name="lgd_method"
           checked={isSelected}
           onChange={onSelect}
-          className="w-4 h-4 text-blue-600 mt-1"
+          className="accent-purple-600 size-4 mt-1"
         />
         <div className="flex-1">
           <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ const LGDOption = ({
                         name="rr_modelling_approach"
                         checked={rrModellingApproach === "auto"}
                         onChange={() => onRrModellingApproachChange("auto")}
-                        className="w-4 h-4 text-blue-600"
+                        className="accent-purple-600 size-4"
                       />
                       <span className="text-sm text-gray-700">Auto</span>
                     </label>
@@ -135,7 +135,7 @@ const LGDOption = ({
                         name="rr_modelling_approach"
                         checked={rrModellingApproach === "custom"}
                         onChange={() => onRrModellingApproachChange("custom")}
-                        className="w-4 h-4 text-blue-600"
+                        className="accent-purple-600 size-4"
                       />
                       <span className="text-sm text-gray-700">Custom</span>
                     </label>
@@ -194,7 +194,7 @@ const LGDOption = ({
                         name="lgd_modelling_approach"
                         checked={lgdModellingApproach === "auto"}
                         onChange={() => onLgdModellingApproachChange("auto")}
-                        className="w-4 h-4 text-blue-600"
+                        className="accent-purple-600 size-4"
                       />
                       <span className="text-sm text-gray-700">Auto</span>
                     </label>
@@ -204,7 +204,7 @@ const LGDOption = ({
                         name="lgd_modelling_approach"
                         checked={lgdModellingApproach === "custom"}
                         onChange={() => onLgdModellingApproachChange("custom")}
-                        className="w-4 h-4 text-blue-600"
+                        className="accent-purple-600 size-4"
                       />
                       <span className="text-sm text-gray-700">Custom</span>
                     </label>

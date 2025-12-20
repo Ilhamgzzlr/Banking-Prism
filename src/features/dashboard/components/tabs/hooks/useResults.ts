@@ -161,20 +161,20 @@ export const useResults = () => {
 
   const handleCreateNewTest = () => {
     // Konfirmasi dengan user
-    if (window.confirm("Are you sure you want to create a new test? All current data will be reset.")) {
-      // Reset store
-      resetStore();
+    // if (window.confirm("Are you sure you want to create a new test? All current data will be reset.")) {
+    // Reset store
+    resetStore();
 
-      // Reset local state
-      setTableData([]);
-      setExpandedSections({
-        table: true,
-        nplGross: false,
-        nplNet: false,
-        car: false,
-        summary: false
-      });
-    }
+    // Reset local state
+    setTableData([]);
+    setExpandedSections({
+      table: true,
+      nplGross: false,
+      nplNet: false,
+      car: false,
+      summary: false
+    });
+    // }
   };
 
 

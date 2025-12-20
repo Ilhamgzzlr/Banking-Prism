@@ -35,7 +35,7 @@ const SimpleFileUpload = ({
             accept={accept}
             onChange={handleFileChange}
           />
-          <span className="inline-flex items-center justify-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors">
+          <span className="inline-flex items-center justify-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors">
             Choose File
           </span>
         </label>

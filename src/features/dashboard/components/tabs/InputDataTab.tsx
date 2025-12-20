@@ -71,53 +71,55 @@ export default function InputDataTab() {
   const isFormValid = files.stressTest && files.macroeconomic;
 
   return (
-    <div className="space-y-6">
-      {/* Time Horizon */}
-      <HorizontalRadioGroup
-        title="Time Horizon of Stress Testing Data"
-        options={TIME_HORIZON_OPTIONS}
-        name="timeHorizon"
-        required
-        selectedValue={timeHorizon}
-        onValueChange={setTimeHorizon}
-      />
-
-      {/* Stress Testing Data Input */}
-      <Section
-        title="Stress Testing Data Input"
-        required
-        isDownloadTemplate
-        templatePath={UPLOAD_CONFIG.STRESS_TEST.templatePath}
-        templateFileName={UPLOAD_CONFIG.STRESS_TEST.templateFileName}
-      >
-        <FileUploadSection
-          title={UPLOAD_CONFIG.STRESS_TEST.title}
-          acceptedTypes={UPLOAD_CONFIG.STRESS_TEST.acceptedTypes}
-          onFileSelect={(file) => handleFileSelect("stressTest", file)}
-          selectedFile={files.stressTest}
+    <div className="flex flex-col flex-1">
+      <div className="space-y-6">
+        {/* Time Horizon */}
+        <HorizontalRadioGroup
+          title="Time Horizon of Stress Testing Data"
+          options={TIME_HORIZON_OPTIONS}
+          name="timeHorizon"
           required
+          selectedValue={timeHorizon}
+          onValueChange={setTimeHorizon}
         />
-      </Section>
 
-      {/* Macroeconomic Scenario Data Input */}
-      <Section
-        title="Macroeconomic Scenario Data Input"
-        required
-        isDownloadTemplate
-        templatePath={UPLOAD_CONFIG.MACROECONOMIC.templatePath}
-        templateFileName={UPLOAD_CONFIG.MACROECONOMIC.templateFileName}
-      >
-        <FileUploadSection
-          title={UPLOAD_CONFIG.MACROECONOMIC.title}
-          acceptedTypes={UPLOAD_CONFIG.MACROECONOMIC.acceptedTypes}
-          onFileSelect={(file) => handleFileSelect("macroeconomic", file)}
-          selectedFile={files.macroeconomic}
+        {/* Stress Testing Data Input */}
+        <Section
+          title="Stress Testing Data Input"
           required
-        />
-      </Section>
+          isDownloadTemplate
+          templatePath={UPLOAD_CONFIG.STRESS_TEST.templatePath}
+          templateFileName={UPLOAD_CONFIG.STRESS_TEST.templateFileName}
+        >
+          <FileUploadSection
+            title={UPLOAD_CONFIG.STRESS_TEST.title}
+            acceptedTypes={UPLOAD_CONFIG.STRESS_TEST.acceptedTypes}
+            onFileSelect={(file) => handleFileSelect("stressTest", file)}
+            selectedFile={files.stressTest}
+            required
+          />
+        </Section>
+
+        {/* Macroeconomic Scenario Data Input */}
+        <Section
+          title="Macroeconomic Scenario Data Input"
+          required
+          isDownloadTemplate
+          templatePath={UPLOAD_CONFIG.MACROECONOMIC.templatePath}
+          templateFileName={UPLOAD_CONFIG.MACROECONOMIC.templateFileName}
+        >
+          <FileUploadSection
+            title={UPLOAD_CONFIG.MACROECONOMIC.title}
+            acceptedTypes={UPLOAD_CONFIG.MACROECONOMIC.acceptedTypes}
+            onFileSelect={(file) => handleFileSelect("macroeconomic", file)}
+            selectedFile={files.macroeconomic}
+            required
+          />
+        </Section>
+      </div>
 
       {/* Action */}
-      <div className="flex justify-between">
+      <div className="mt-auto pt-6 flex justify-between gap-3">
         <BackButton
           onClick={handleBack}
           label="Back"
