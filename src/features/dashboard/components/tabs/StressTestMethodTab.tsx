@@ -36,11 +36,8 @@ export default function StressTestMethodTab() {
       economic_scenario: selectedScenario,
     };
 
-    // if (!orderId) {
-    
-      const order = await OrdersAPI.createOrder(payload);
-      setOrderId(order.order_id);
-    // }
+    const order = await OrdersAPI.createOrder(payload);
+    setOrderId(order.order_id);
     savePageData(1, payload);
     nextStep();
   };
