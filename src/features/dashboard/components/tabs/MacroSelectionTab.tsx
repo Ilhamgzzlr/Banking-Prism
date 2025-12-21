@@ -37,6 +37,7 @@ export default function MacroSelectionTab() {
     percentiles,
     handleFactorToggle,
     handleSubFactorToggle,
+    handleSelectAllSubFactors,
     handlePercentileChange,
     showPercentileSection,
     validatePercentiles,
@@ -70,10 +71,10 @@ export default function MacroSelectionTab() {
   };
 
 
-  const selectedCount = factors.filter(f => f.selected).length;
-  const selectedSubFactorCount = factors.reduce((total, factor) =>
-    total + (factor.selectedSubFactors?.length || 0), 0
-  );
+  // const selectedCount = factors.filter(f => f.selected).length;
+  // const selectedSubFactorCount = factors.reduce((total, factor) =>
+  //   total + (factor.selectedSubFactors?.length || 0), 0
+  // );
 
   const handleContinue = async () => {
     if (!orderId) return alert("Order not found");
@@ -122,7 +123,7 @@ export default function MacroSelectionTab() {
           <p className="text-sm text-gray-600">
             Select macrofactors to include in your stress testing analysis
           </p>
-          <div className="flex gap-3">
+          {/* <div className="flex gap-3">
             <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
               {selectedCount} factor{selectedCount !== 1 ? 's' : ''} selected
             </span>
@@ -131,18 +132,19 @@ export default function MacroSelectionTab() {
                 {selectedSubFactorCount} Macrofactor{selectedSubFactorCount !== 1 ? 's' : ''}
               </span>
             )}
-          </div>
+          </div> */}
         </div>
       </Section>
 
       {/* Macro Factors List */}
-      <div className="space-y-3">
+      <div className="space-y-1">
         {factors.map((factor) => (
           <MacroFactorItem
             key={factor.id}
             factor={factor}
             onToggle={handleFactorToggle}
             onSubFactorToggle={handleSubFactorToggle}
+            onSelectAllSubFactors={handleSelectAllSubFactors}
           />
         ))}
       </div>

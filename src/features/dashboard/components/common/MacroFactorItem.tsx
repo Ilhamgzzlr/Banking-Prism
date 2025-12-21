@@ -2,6 +2,8 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
+import { ChevronRight } from 'lucide-react';
 
 interface MacroFactorItemProps {
     factor: {
@@ -13,10 +15,15 @@ interface MacroFactorItemProps {
     };
     onToggle: (id: string, value: boolean) => void;
     onSubFactorToggle: (factorId: string, subFactor: string) => void;
+    onSelectAllSubFactors: (factorId: string) => void;
 }
 
-const MacroFactorItem = ({ factor, onToggle, onSubFactorToggle }: MacroFactorItemProps) => {
+const MacroFactorItem = ({ factor, onToggle, onSubFactorToggle, onSelectAllSubFactors }: MacroFactorItemProps) => {
     const [isExpanded, setIsExpanded] = useState(true);
+    const allSelected =
+        factor.subFactors &&
+        factor.selectedSubFactors?.length === factor.subFactors.length;
+
 
     return (
         <div className="space-y-2">
@@ -29,7 +36,9 @@ const MacroFactorItem = ({ factor, onToggle, onSubFactorToggle }: MacroFactorIte
                                 size="icon"
                                 onClick={() => setIsExpanded(!isExpanded)}
                             >
-                                {isExpanded ? "−" : "+"}
+                                <ChevronRight
+                                    className={`!h-5 !w-5 transition-transform duration-200 ${isExpanded ? "rotate-90" : "rotate-0"}`}
+                                />
                             </Button>
                         ) : (
                             <div className="w-9" />
@@ -66,32 +75,38 @@ const MacroFactorItem = ({ factor, onToggle, onSubFactorToggle }: MacroFactorIte
             </Card>
 
             {/* Sub Factors */}
-            {factor.selected && factor.subFactors && isExpanded && (
-                <Card className="ml-16 bg-muted/20">
+            <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${factor.selected && factor.subFactors && isExpanded ? "opacity-100" : "max-h-0 opacity-0"
+                    }`}
+            >
+                <Card className="ml-16 bg-white">
                     <CardContent className="p-4 space-y-3">
-                        <h4 className="text-sm font-medium text-muted-foreground">
-                            Select Macrofactors
-                        </h4>
+                        <h4 className="text-sm font-medium">Select Macrofactors</h4>
+                        {/* SELECT ALL */}
+                        <div className="flex items-center gap-2 rounded-md p-2 hover:bg-muted">
+                            <Checkbox
+                                checked={allSelected}
+                                onCheckedChange={() => onSelectAllSubFactors(factor.id)}
+                            />
+                            <span className="text-sm font-medium">
+                                Select All
+                            </span>
+                        </div>
 
-                        {factor.subFactors.map((subFactor) => (
-                            <div
-                                key={subFactor}
-                                className="flex items-center gap-2 rounded-md p-2 hover:bg-muted"
-                            >
+                        <Separator />
+
+                        {factor.subFactors?.map((subFactor) => (
+                            <div key={subFactor} className="flex items-center gap-2 rounded-md p-2 hover:bg-muted">
                                 <Checkbox
-                                    checked={
-                                        factor.selectedSubFactors?.includes(subFactor) || false
-                                    }
-                                    onCheckedChange={() =>
-                                        onSubFactorToggle(factor.id, subFactor)
-                                    }
+                                    checked={factor.selectedSubFactors?.includes(subFactor) || false}
+                                    onCheckedChange={() => onSubFactorToggle(factor.id, subFactor)}
                                 />
                                 <span className="text-sm">{subFactor}</span>
                             </div>
                         ))}
                     </CardContent>
                 </Card>
-            )}
+            </div>
         </div>
     );
 };

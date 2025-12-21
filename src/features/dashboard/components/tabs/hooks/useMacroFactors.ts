@@ -57,6 +57,25 @@ export const useMacroFactors = (customFactors?: MacroFactor[], noMacroPercentile
         }));
     };
 
+    const handleSelectAllSubFactors = (factorId: string) => {
+        setFactors(prev =>
+            prev.map(factor => {
+                if (factor.id !== factorId || !factor.subFactors) return factor;
+
+                const allSelected =
+                    factor.selectedSubFactors?.length === factor.subFactors.length;
+
+                return {
+                    ...factor,
+                    selectedSubFactors: allSelected
+                        ? []
+                        : [...factor.subFactors]
+                };
+            })
+        );
+    };
+
+
     const handlePercentileChange = (level: string, value: string) => {
         setPercentiles(prev => ({
             ...prev,
@@ -111,6 +130,7 @@ export const useMacroFactors = (customFactors?: MacroFactor[], noMacroPercentile
         percentiles,
         handleFactorToggle,
         handleSubFactorToggle,
+        handleSelectAllSubFactors,
         handlePercentileChange,
         getSelectedFactors,
         getSelectedSubFactors,
