@@ -1,7 +1,7 @@
 import { ParameterInput, SimpleFileUpload } from "../common";
 
 interface LGDOptionProps {
-  method: "rr" | "modelling_rr" | "modelling_lgd";
+  method: "constant" | "modelling_rr" | "modelling_lgd";
   label: string;
   isSelected: boolean;
   onSelect: () => void;
@@ -70,14 +70,14 @@ const LGDOption = ({
           </div>
 
           {/* RR Value Input */}
-          {method === "rr" && isSelected && onRrValueChange && (
+          {method === "constant" && isSelected && onRrValueChange && (
             <div className="mt-3">
               <ParameterInput
                 label="Loss Given Default Value"
                 name="rr_value"
                 value={rrValue || ""}
                 onChange={onRrValueChange}
-                placeholder="e.g., 80000"
+                placeholder="e.g., 0.1"
                 type="number"
               />
             </div>

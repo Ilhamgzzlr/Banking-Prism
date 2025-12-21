@@ -4,7 +4,7 @@ import {
   INITIALIZATION_PARAMETERS,
   GROWTH_ASSUMPTION_OPTIONS,
   LGD_METHODS,
-  LOAN_SEGMENTS
+  // LOAN_SEGMENTS
 } from "./data/parameterConfig";
 import { useOrderStore } from "@/stores/useOrderStore";
 import { useState, useEffect } from "react";
@@ -28,13 +28,15 @@ export default function InputParameterTab() {
     prevStep,
   } = useOrderStore();
 
+  const stressColumns = page2?.stress_columns?.slice(1) || [];
+
   const {
     parameters,
     updateParameter,
     handleFileChange,
     validateParameters,
     setShowElasticityTooltip
-  } = useParameters(page6?.parameters);
+  } = useParameters(page6?.parameters, stressColumns);
 
 
   const gdpColumnOptions = page2?.macro_columns || [];
@@ -52,12 +54,12 @@ export default function InputParameterTab() {
     EQUITY: Number(parameters.equity),
   };
 
-  const eadValues = LOAN_SEGMENTS.map(segment => ({
+  const eadValues = stressColumns.map((segment: any) => ({
     ead_column: segment,
-    value: Number(parameters[`exposure_${segment}`]),
+    value: Number(parameters.exposure[segment]),
     elasticity_value:
       parameters.ead_growth_assumption === "gdp" || parameters.ead_growth_assumption === "manual"
-        ? Number(parameters[`ead_${segment}`])
+        ? Number(parameters.ead[segment])
         : undefined,
   }));
 
@@ -78,8 +80,8 @@ export default function InputParameterTab() {
         : undefined,
   };
 
-  const nplValues = LOAN_SEGMENTS.reduce((acc, segment) => {
-    acc[segment] = Number(parameters[`npl_${segment}`]);
+  const nplValues = stressColumns.reduce((acc: any, segment: any) => {
+    acc[segment] = Number(parameters.npl[segment]);
     return acc;
   }, {} as Record<string, number>);
 
@@ -91,28 +93,28 @@ export default function InputParameterTab() {
 
   const lgdConfig = {
     lgd_mode: (
-      parameters.lgd_method === "rr"
-        ? "RR"
+      parameters.lgd_method === "constant"
+        ? "Constant"
         : parameters.lgd_method === "modelling_rr"
           ? "Modelling RR"
           : "Modelling LGD"
-    ) as "RR" | "Modelling RR" | "Modelling LGD",
+    ) as "Constant" | "Modelling RR" | "Modelling LGD",
 
 
     rr_value:
-      parameters.lgd_method === "rr"
+      parameters.lgd_method === "constant"
         ? Number(parameters.rr_value)
         : undefined,
 
     historical_data_file:
-      parameters.lgd_method !== "rr"
+      parameters.lgd_method !== "constant"
         ? parameters.lgd_method === "modelling_rr"
           ? parameters.rr_file
           : parameters.lgd_file
         : null,
 
     related_macro_data:
-      parameters.lgd_method !== "rr"
+      parameters.lgd_method !== "constant"
         ? [
           parameters.lgd_method === "modelling_rr"
             ? parameters.rr_macro_column
@@ -121,7 +123,7 @@ export default function InputParameterTab() {
         : undefined,
 
     modelling_approach:
-      parameters.lgd_method !== "rr"
+      parameters.lgd_method !== "constant"
         ? parameters.lgd_method === "modelling_rr"
           ? parameters.rr_modelling_approach
           : parameters.lgd_modelling_approach
@@ -190,40 +192,40 @@ export default function InputParameterTab() {
   });
 
 
-  const exposureParams = LOAN_SEGMENTS.map(segment => ({
+  const exposureParams = stressColumns.map((segment: any) => ({
     id: `exposure_${segment}`,
     label: segment === "micro" ? "Micro (Enterprise)" :
       segment === "civil" ? "Civil Servant" :
         segment.charAt(0).toUpperCase() + segment.slice(1),
-    value: parameters[`exposure_${segment}` as keyof typeof parameters] as string,
+    value: parameters.exposure[segment] || "",
     placeholder: "e.g., 18000000"
   }));
 
   const growthParams = parameters.ead_growth_assumption !== "constant"
-    ? LOAN_SEGMENTS.map(segment => ({
+    ? stressColumns.map((segment: any) => ({
       id: `ead_${segment}`,
       label: segment === "micro" ? "Micro (Enterprise)" :
         segment === "civil" ? "Civil Servant" :
           segment.charAt(0).toUpperCase() + segment.slice(1),
-      value: parameters[`ead_${segment}` as keyof typeof parameters] as string,
+      value: parameters.ead[segment] || "",
       placeholder: parameters.ead_growth_assumption === "gdp" ? "e.g., 1.5" : "e.g., 0.05",
       unit: parameters.ead_growth_assumption === "gdp" ? "elasticity" : "%"
     }))
     : [];
 
-  const nplParams = LOAN_SEGMENTS.map(segment => ({
+  const nplParams = stressColumns.map((segment: any) => ({
     id: `npl_${segment}`,
     label: segment === "micro" ? "Micro (Enterprise)" :
       segment === "civil" ? "Civil Servant" :
         segment.charAt(0).toUpperCase() + segment.slice(1),
-    value: parameters[`npl_${segment}` as keyof typeof parameters] as string,
+    value: parameters.npl[segment] || "",
     placeholder: "e.g., 75000"
   }));
 
   const rwaParams = [
-    { id: "rwa_credit", label: "Credit RWA", value: parameters.rwa_credit, placeholder: "e.g., 80000" },
-    { id: "rwa_non_credit", label: "Non-Credit RWA", value: parameters.rwa_non_credit, placeholder: "e.g., 150000" },
-    { id: "rwa_operational", label: "Operational RWA", value: parameters.rwa_operational, placeholder: "e.g., 50000" }
+    { id: "rwa_credit", label: "Credit Risk RWA", value: parameters.rwa_credit, placeholder: "e.g., 80000" },
+    { id: "rwa_non_credit", label: "Market Risk RWA", value: parameters.rwa_non_credit, placeholder: "e.g., 150000" },
+    { id: "rwa_operational", label: "Operational Risk RWA", value: parameters.rwa_operational, placeholder: "e.g., 50000" }
   ];
 
   const [openSelectModel, setOpenSelectModel] = useState(false);
@@ -273,7 +275,10 @@ export default function InputParameterTab() {
       <ParameterSection
         title="Exposure at Default"
         parameters={exposureParams}
-        onParameterChange={(id, value) => updateParameter(id as any, value)}
+        onParameterChange={(id, value) => {
+          const segment = id.replace('exposure_', '');
+          updateParameter('exposure', { ...parameters.exposure, [segment]: value });
+        }}
         columns={2}
         required
       />
@@ -365,7 +370,10 @@ export default function InputParameterTab() {
               <ParameterSection
                 title={`Growth Assumption for ${parameters.ead_growth_assumption === "gdp" ? "GDP Elasticity" : "Manual Growth"}`}
                 parameters={growthParams}
-                onParameterChange={(id, value) => updateParameter(id as any, value)}
+                onParameterChange={(id, value) => {
+                  const segment = id.replace('ead_', '');
+                  updateParameter('ead', { ...parameters.ead, [segment]: value });
+                }}
                 columns={2}
               />
             )}
@@ -377,7 +385,10 @@ export default function InputParameterTab() {
       <ParameterSection
         title="Non Performing Loan (NPL)"
         parameters={nplParams}
-        onParameterChange={(id, value) => updateParameter(id as any, value)}
+        onParameterChange={(id, value) => {
+          const segment = id.replace('npl_', '');
+          updateParameter('npl', { ...parameters.npl, [segment]: value });
+        }}
         columns={2}
       />
 

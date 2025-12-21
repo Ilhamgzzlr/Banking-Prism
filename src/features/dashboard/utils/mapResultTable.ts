@@ -17,9 +17,7 @@ export const mapResultTable = (
     npl_gross_pct: r.NPL_Rate_Gross,
     npl_net_pct: r.NPL_Rate_Net,
 
-    crdm_total: r.CKPN,
-    crkm_sp: r.Equity,
-    crkm_k1: r.Equity, // adjust if different
-    coverage: r.CAR,
-    cor: r.CKPN / r.Equity,
+    ckpn: r.CKPN,
+    equity: r.Equity,
+    car: r.CAR,
   }));

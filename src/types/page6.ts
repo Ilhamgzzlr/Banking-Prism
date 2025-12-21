@@ -27,7 +27,7 @@ export interface Page6Params {
   };
 
   lgd_config: {
-    lgd_mode: "RR" | "Modelling RR" | "Modelling LGD";
+    lgd_mode: "Constant" | "Modelling RR" | "Modelling LGD";
     rr_value?: number;
     historical_data_file?: File | null;
     related_macro_data?: string[];
@@ -35,7 +35,9 @@ export interface Page6Params {
   };
 }
 
+// Updated StressTestParameters with dynamic fields
 export interface StressTestParameters {
+  // Initialization parameters
   train_ratio: string;
   resid_mode_pd: "Normal" | "Bootstrapping" | "Residual";
   write_off_value: string;
@@ -43,28 +45,22 @@ export interface StressTestParameters {
   cure_rate_value: string;
   equity: string;
 
-  exposure_corporation: string;
-  exposure_micro: string;
-  exposure_housing: string;
-  exposure_civil: string;
+  // Dynamic EAD parameters (now objects instead of individual fields)
+  exposure: Record<string, string>;  // { corporation: "1000", micro: "2000", ... }
+  ead: Record<string, string>;       // { corporation: "1.5", micro: "1.2", ... }
+  npl: Record<string, string>;       // { corporation: "500", micro: "300", ... }
 
+  // Growth assumption
   ead_growth_assumption: "constant" | "manual" | "gdp";
   gdp_column: string;
-  ead_corporation: string;
-  ead_micro: string;
-  ead_housing: string;
-  ead_civil: string;
 
-  npl_corporation: string;
-  npl_micro: string;
-  npl_housing: string;
-  npl_civil: string;
-
+  // RWA parameters
   rwa_credit: string;
   rwa_non_credit: string;
   rwa_operational: string;
 
-  lgd_method: "rr" | "modelling_rr" | "modelling_lgd";
+  // LGD parameters
+  lgd_method: "constant" | "modelling_rr" | "modelling_lgd";
   rr_value: string;
   rr_file: File | null;
   rr_macro_column: string;
@@ -73,4 +69,3 @@ export interface StressTestParameters {
   lgd_macro_column: string;
   lgd_modelling_approach: "auto" | "custom";
 }
-

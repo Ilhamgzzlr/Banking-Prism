@@ -3,6 +3,7 @@ import { ExpandableSection, ResultsTable, ScenarioLineChart, ResultLoading } fro
 import { useResults } from "./hooks/useResults";
 import { TABLE_COLUMNS } from "./data/resultConfig";
 import { formatMetric, METRIC_CONFIG } from "@features/dashboard/utils/formatMetric";
+import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
     AlertDialogTrigger,
@@ -113,15 +114,15 @@ export default function ResultTab() {
 
 
             {/* Action Buttons */}
-            <div className="flex justify-between items-center pt-4 border-t">
+            <div className="flex justify-end items-center pt-4 border-t">
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <button
-                            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                            type="button"
+                        <Button
+                            className="flex items-center gap-2 px-4 py-2 text-white bg-purple-600 border rounded-md hover:bg-purple-700 transition-colors"
+                            size="lg"
                         >
                             Create New Test
-                        </button>
+                        </Button>
                     </AlertDialogTrigger>
 
                     <AlertDialogContent>
@@ -149,7 +150,7 @@ export default function ResultTab() {
                     </AlertDialogContent>
                 </AlertDialog>
 
-                <div className="flex gap-3">
+                {/* <div className="flex gap-3">
                     <button
                         onClick={handleExportResults}
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -158,7 +159,7 @@ export default function ResultTab() {
                         <Download className="w-4 h-4" />
                         Export Full Report
                     </button>
-                </div>
+                </div> */}
             </div>
         </div>
     );

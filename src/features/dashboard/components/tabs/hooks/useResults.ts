@@ -10,11 +10,9 @@ export interface TableData {
   npl_total: number;
   npl_gross_pct: number;
   npl_net_pct: number;
-  crdm_total: number;
-  crkm_sp: number;
-  crkm_k1: number;
-  coverage: number;
-  cor: number;
+  ckpn: number;
+  equity: number;
+  car: number;
 }
 
 export interface ChartSection {

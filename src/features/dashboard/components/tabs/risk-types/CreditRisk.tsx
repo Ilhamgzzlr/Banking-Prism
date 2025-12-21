@@ -116,24 +116,6 @@ export default function CreditRisk({
                   />
                 </div>
 
-                {/* Risk Tolerance */}
-                <div className="space-y-2">
-                  <Label htmlFor={`risk-tolerance-${index}`}>
-                    Risk Tolerance
-                  </Label>
-                  <Input
-                    id={`risk-tolerance-${index}`}
-                    type="number"
-                    value={metric.riskTolerance}
-                    onChange={(e) =>
-                      handleValidatedInputChange(index, "riskTolerance", e.target.value)
-                    }
-                    className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskTolerance === "" ? "border-red-300" : ""}`}
-                    placeholder="e.g., 0.05"
-                    required
-                  />
-                </div>
-
                 {/* Risk Appetite */}
                 <div className="space-y-2">
                   <Label htmlFor={`risk-appetite-${index}`}>
@@ -147,6 +129,24 @@ export default function CreditRisk({
                       handleValidatedInputChange(index, "riskAppetite", e.target.value)
                     }
                     className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskAppetite === "" ? "border-red-300" : ""}`}
+                    placeholder="e.g., 0.05"
+                    required
+                  />
+                </div>
+
+                {/* Risk Tolerance */}
+                <div className="space-y-2">
+                  <Label htmlFor={`risk-tolerance-${index}`}>
+                    Risk Tolerance
+                  </Label>
+                  <Input
+                    id={`risk-tolerance-${index}`}
+                    type="number"
+                    value={metric.riskTolerance}
+                    onChange={(e) =>
+                      handleValidatedInputChange(index, "riskTolerance", e.target.value)
+                    }
+                    className={`[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${metric.riskTolerance === "" ? "border-red-300" : ""}`}
                     placeholder="e.g., 0.05"
                     required
                   />
