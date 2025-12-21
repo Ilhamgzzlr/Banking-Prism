@@ -16,7 +16,7 @@ export default function StressModelTabs() {
 
   const {
     currentStep,
-    setStep,
+    // setStep,
   } = useOrderStore();
 
   return (
