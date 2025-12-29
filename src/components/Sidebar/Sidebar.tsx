@@ -21,38 +21,11 @@ const Sidebar: React.FC = () => {
   return (
     <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
       {/* Logo Section */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center gap-2">
-          <div className="relative w-12 h-12">
-            {/* Logo SVG */}
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              {/* Orange arc */}
-              <path
-                d="M 50 20 Q 70 20 80 35"
-                fill="none"
-                stroke="#FF6B35"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-              {/* Blue wave */}
-              <path
-                d="M 30 45 Q 40 40 50 45 Q 60 50 70 45"
-                fill="none"
-                stroke="#0066CC"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-              {/* Green curve */}
-              <path
-                d="M 50 50 Q 60 55 65 65 Q 70 75 65 85"
-                fill="none"
-                stroke="#00CC66"
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-            </svg>
+      <div className="border-b border-gray-200">
+        <div className="flex items-center justify-center">
+          <div className="relative">
+            <img src="/Logo PRISM.png" alt="Prism" />
           </div>
-          <span className="text-2xl font-bold text-gray-800">PRISM</span>
         </div>
       </div>
 

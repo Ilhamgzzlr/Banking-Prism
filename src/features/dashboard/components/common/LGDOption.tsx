@@ -1,28 +1,31 @@
 import { ParameterInput, SimpleFileUpload } from "../common";
+import MultiSelect from "@components/ui/multiselect";
 
 interface LGDOptionProps {
-  method: "constant" | "modelling_rr" | "modelling_lgd";
+  method: "constant" | "rr_model" | "lgd_model";
   label: string;
   isSelected: boolean;
   onSelect: () => void;
+
+  macroOptions: string[];
 
   // LGD specific
   lgdValue?: string;
   onLGDValueChange?: (value: string) => void;
 
-  // Modelling RR specific
+  // RR Model specific
   rrFile?: File | null;
   onRrFileChange?: (file: File | null) => void;
-  rrMacroColumn?: string;
-  onRrMacroColumnChange?: (value: string) => void;
+  rrMacroColumns?: string[];
+  onRrMacroColumnsChange?: (value: string[]) => void;
   rrModellingApproach?: "auto" | "custom";
   onRrModellingApproachChange?: (approach: "auto" | "custom") => void;
 
-  // Modelling LGD specific
+  // LGD Model specific
   lgdFile?: File | null;
   onLgdFileChange?: (file: File | null) => void;
-  lgdMacroColumn?: string;
-  onLgdMacroColumnChange?: (value: string) => void;
+  lgdMacroColumns?: string[];
+  onLgdMacroColumnsChange?: (value: string[]) => void;
   lgdModellingApproach?: "auto" | "custom";
   onLgdModellingApproachChange?: (approach: "auto" | "custom") => void;
 
@@ -38,22 +41,29 @@ const LGDOption = ({
   label,
   isSelected,
   onSelect,
+  macroOptions,
   lgdValue,
   onLGDValueChange,
   rrFile,
   onRrFileChange,
-  rrMacroColumn,
-  onRrMacroColumnChange,
+  rrMacroColumns,
+  onRrMacroColumnsChange,
   rrModellingApproach,
   onRrModellingApproachChange,
   lgdFile,
   onLgdFileChange,
-  lgdMacroColumn,
-  onLgdMacroColumnChange,
+  lgdMacroColumns,
+  onLgdMacroColumnsChange,
   lgdModellingApproach,
   onLgdModellingApproachChange,
   selectedModel
 }: LGDOptionProps) => {
+
+  const macroSelectOptions = macroOptions.map(col => ({
+    label: col,
+    value: col,
+  }));
+
   return (
     <div className="space-y-2 border-b pb-4 last:border-b-0">
       <label className="flex items-start gap-3 cursor-pointer">
@@ -83,8 +93,8 @@ const LGDOption = ({
             </div>
           )}
 
-          {/* Modelling RR Content */}
-          {method === "modelling_rr" && isSelected && (
+          {/* RR Model Content */}
+          {method === "rr_model" && isSelected && (
             <div className="mt-3 space-y-4">
               {/* Upload Historical RR Data */}
               <SimpleFileUpload
@@ -99,18 +109,17 @@ const LGDOption = ({
                 <label className="block text-sm font-medium text-gray-900 mb-2">
                   Choose Related Macroeconomic Data
                 </label>
-                <select
-                  value={rrMacroColumn || ""}
-                  onChange={(e) => onRrMacroColumnChange?.(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                >
-                  <option value="">Select macroeconomic data...</option>
-                  <option value="gdp">GDP</option>
-                  <option value="inflation">Inflation</option>
-                  <option value="unemployment">Unemployment</option>
-                  <option value="interest_rate">Interest Rate</option>
-                </select>
+
+                <MultiSelect
+                  options={macroSelectOptions}
+                  value={rrMacroColumns || []}
+                  onChange={(vals) =>
+                    onRrMacroColumnsChange?.(vals)
+                  }
+                  placeholder="Select macroeconomic data..."
+                />
               </div>
+
 
               {/* Modelling Approach */}
               {onRrModellingApproachChange && (
@@ -152,8 +161,8 @@ const LGDOption = ({
             </div>
           )}
 
-          {/* Modelling LGD Content */}
-          {method === "modelling_lgd" && isSelected && (
+          {/* LGD Model Content */}
+          {method === "lgd_model" && isSelected && (
             <div className="mt-3 space-y-4">
               {/* Upload Historical LGD Data */}
               <SimpleFileUpload
@@ -168,18 +177,17 @@ const LGDOption = ({
                 <label className="block text-sm font-medium text-gray-900 mb-2">
                   Choose Related Macroeconomic Data
                 </label>
-                <select
-                  value={lgdMacroColumn || ""}
-                  onChange={(e) => onLgdMacroColumnChange?.(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                >
-                  <option value="">Select macroeconomic data...</option>
-                  <option value="gdp">GDP</option>
-                  <option value="inflation">Inflation</option>
-                  <option value="unemployment">Unemployment</option>
-                  <option value="property_price">Property Price Index</option>
-                </select>
+
+                <MultiSelect
+                  options={macroSelectOptions}
+                  value={lgdMacroColumns || []}
+                  onChange={(vals) =>
+                    onLgdMacroColumnsChange?.(vals)
+                  }
+                  placeholder="Select macroeconomic data..."
+                />
               </div>
+
 
               {/* Modelling Approach */}
               {onLgdModellingApproachChange && (

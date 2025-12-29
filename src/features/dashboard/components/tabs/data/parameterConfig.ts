@@ -33,12 +33,12 @@ export const LGD_METHODS = [
     label: "Loss Given Default",
   },
   {
-    value: "modelling_rr" as const,
-    label: "Modelling RR",
+    value: "rr_model" as const,
+    label: "RR Model",
   },
   {
-    value: "modelling_lgd" as const,
-    label: "Modelling LGD",
+    value: "lgd_model" as const,
+    label: "LGD Model",
   }
 ] as const;
 
@@ -82,10 +82,10 @@ export const getDefaultParameterValues = (stressColumns: string[] = []) => {
     lgd_method: "constant" as const,
     lgd_constant_value: "",
     rr_file: null,
-    rr_macro_column: "",
+    rr_macro_columns: [],
     rr_modelling_approach: "auto" as const,
     lgd_file: null,
-    lgd_macro_column: "",
+    lgd_macro_columns: [],
     lgd_modelling_approach: "auto" as const,
   };
 };

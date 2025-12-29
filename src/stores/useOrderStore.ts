@@ -15,7 +15,7 @@ interface OrderState {
     page1?: any;
     page2?: any;
     page3?: {
-        scenario_option: "Regulatory Macroeconomic Scenario" | "Custom Scenario Input" | "macroeconomic";
+        scenario_option: "BI Scenario" | "Custom Scenario Input" | "macroeconomic";
         macro_levels?: any[];
         scenario_upload?: boolean;
         sheet_names?: string[];

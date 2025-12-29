@@ -24,7 +24,7 @@ export default function MacroSelectionTab() {
 
   const hasCustomOrRegulatoryScenario =
     page3?.scenario_option === "Custom Scenario Input" ||
-    page3?.scenario_option === "Regulatory Macroeconomic Scenario";
+    page3?.scenario_option === "BI Scenario";
 
   const factorsFromFiles = buildMacroFactors(
     stressColumns,
@@ -67,7 +67,7 @@ export default function MacroSelectionTab() {
       })),
       no_macro_percentile: hasNoMacro
         ? Object.values(percentiles).filter(Boolean)
-        : null,
+        : [],
     };
   };
 
@@ -80,7 +80,7 @@ export default function MacroSelectionTab() {
   const handleContinue = async () => {
     if (!orderId) return alert("Order not found");
 
-    if (showPercentileSection && !validatePercentiles()) {
+    if (showPercentileSection && hasNoMacro && !validatePercentiles()) {
       alert("Please enter valid percentiles (between 0.1 and 99.9)");
       return;
     }
@@ -111,7 +111,7 @@ export default function MacroSelectionTab() {
 
 
   const isContinueEnabled = factors.some(f => f.selected) &&
-    (!showPercentileSection || validatePercentiles());
+    (!hasNoMacro || !showPercentileSection || validatePercentiles());
 
   return (
     <div className="space-y-6">
@@ -156,6 +156,7 @@ export default function MacroSelectionTab() {
         onPercentileChange={handlePercentileChange}
         show={showPercentileSection}
         levelNames={hasCustomOrRegulatoryScenario ? sheetNames : undefined}
+        disabled={!hasNoMacro}
       />
 
       {/* Action Buttons */}

@@ -44,7 +44,7 @@ export const OrdersAPI = {
     savePage3: (
         orderId: number,
         payload:
-            | { scenario_option: "Regulatory Macroeconomic Scenario"; scenario_upload: File }
+            | { scenario_option: "BI Scenario"; scenario_upload: File }
             | { scenario_option: "Custom Scenario Input"; scenario_upload: File }
             | { scenario_option: "macroeconomic"; levels: any[] }
     ) => {

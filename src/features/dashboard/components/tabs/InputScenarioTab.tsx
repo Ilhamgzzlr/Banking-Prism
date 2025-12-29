@@ -34,7 +34,7 @@ export default function InputScenarioTab() {
           ? "Custom Scenario Input"
           : selectedScenario === "macroeconomic"
             ? "macroeconomic"
-            : "Regulatory Macroeconomic Scenario",
+            : "BI Scenario",
     });
   }, [selectedScenario]);
 
@@ -110,16 +110,16 @@ export default function InputScenarioTab() {
         ? "Custom Scenario Input"
         : selectedScenario === "macroeconomic"
           ? "macroeconomic"
-          : "Regulatory Macroeconomic Scenario";
+          : "BI Scenario";
 
     try {
-      if (scenarioType === "Regulatory Macroeconomic Scenario" && regulatoryFile) {
+      if (scenarioType === "BI Scenario" && regulatoryFile) {
         await OrdersAPI.savePage3(orderId, {
-          scenario_option: "Regulatory Macroeconomic Scenario",
+          scenario_option: "BI Scenario",
           scenario_upload: regulatoryFile,
         });
 
-        savePageData(3, { scenario_option: "Regulatory Macroeconomic Scenario", uploaded: true, sheet_names: sheetNames });
+        savePageData(3, { scenario_option: "BI Scenario", uploaded: true, sheet_names: sheetNames });
       }
 
       if (scenarioType === "Custom Scenario Input" && customFile) {

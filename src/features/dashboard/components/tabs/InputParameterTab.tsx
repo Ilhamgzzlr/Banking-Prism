@@ -95,10 +95,10 @@ export default function InputParameterTab() {
     lgd_mode: (
       parameters.lgd_method === "constant"
         ? "Constant"
-        : parameters.lgd_method === "modelling_rr"
-          ? "Modelling RR"
-          : "Modelling LGD"
-    ) as "Constant" | "Modelling RR" | "Modelling LGD",
+        : parameters.lgd_method === "rr_model"
+          ? "RR Model"
+          : "LGD Model"
+    ) as "Constant" | "RR Model" | "LGD Model",
 
 
     lgd_constant_value:
@@ -108,23 +108,21 @@ export default function InputParameterTab() {
 
     historical_data_file:
       parameters.lgd_method !== "constant"
-        ? parameters.lgd_method === "modelling_rr"
+        ? parameters.lgd_method === "rr_model"
           ? parameters.rr_file
           : parameters.lgd_file
         : null,
 
     related_macro_data:
       parameters.lgd_method !== "constant"
-        ? [
-          parameters.lgd_method === "modelling_rr"
-            ? parameters.rr_macro_column
-            : parameters.lgd_macro_column,
-        ]
+        ? parameters.lgd_method === "rr_model"
+            ? parameters.rr_macro_columns
+            : parameters.lgd_macro_columns
         : undefined,
 
     modelling_approach:
       parameters.lgd_method !== "constant"
-        ? parameters.lgd_method === "modelling_rr"
+        ? parameters.lgd_method === "rr_model"
           ? parameters.rr_modelling_approach
           : parameters.lgd_modelling_approach
         : undefined,
@@ -409,19 +407,24 @@ export default function InputParameterTab() {
               method={method.value}
               label={method.label}
               isSelected={parameters.lgd_method === method.value}
+              macroOptions={gdpColumnOptions.slice(1) || []}
               onSelect={() => updateParameter("lgd_method", method.value)}
               lgdValue={parameters.lgd_constant_value}
               onLGDValueChange={(value) => updateParameter("lgd_constant_value", value)}
               rrFile={parameters.rr_file}
               onRrFileChange={(file) => handleFileChange("rr_file", file)}
-              rrMacroColumn={parameters.rr_macro_column}
-              onRrMacroColumnChange={(value) => updateParameter("rr_macro_column", value)}
+              rrMacroColumns={parameters.rr_macro_columns || []}
+              onRrMacroColumnsChange={(values) =>
+                updateParameter("rr_macro_columns", values)
+              }
               rrModellingApproach={parameters.rr_modelling_approach}
               onRrModellingApproachChange={handleRrModellingApproachChange}
               lgdFile={parameters.lgd_file}
               onLgdFileChange={(file) => handleFileChange("lgd_file", file)}
-              lgdMacroColumn={parameters.lgd_macro_column}
-              onLgdMacroColumnChange={(value) => updateParameter("lgd_macro_column", value)}
+              lgdMacroColumns={parameters.lgd_macro_columns || []}
+              onLgdMacroColumnsChange={(values) =>
+                updateParameter("lgd_macro_columns", values)
+              }
               lgdModellingApproach={parameters.lgd_modelling_approach}
               onLgdModellingApproachChange={handleLgdModellingApproachChange}
               selectedModel={selectedModel}

@@ -44,13 +44,13 @@ export interface Parameters {
   rwa_operational: string;
 
   // LGD
-  lgd_method: "constant" | "modelling_rr" | "modelling_lgd";
+  lgd_method: "constant" | "rr_model" | "lgd_model";
   lgd_constant_value: string;
   rr_file: File | null;
-  rr_macro_column: string;
+  rr_macro_columns: string[];
   rr_modelling_approach: "auto" | "custom";
   lgd_file: File | null;
-  lgd_macro_column: string;
+  lgd_macro_columns: string[];
   lgd_modelling_approach: "auto" | "custom";
 }
 
@@ -122,11 +122,11 @@ export const useParameters = (initialParams?: Partial<Parameters>, stressColumns
       return false;
     }
 
-    if (parameters.lgd_method === "modelling_rr" && !parameters.rr_file) {
+    if (parameters.lgd_method === "rr_model" && !parameters.rr_file) {
       return false;
     }
 
-    if (parameters.lgd_method === "modelling_lgd" && !parameters.lgd_file) {
+    if (parameters.lgd_method === "lgd_model" && !parameters.lgd_file) {
       return false;
     }
 
