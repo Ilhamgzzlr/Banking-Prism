@@ -40,8 +40,10 @@ export default function InputDataTab() {
     }
 
     try {
+      // sementara mapping manual time_horizon
+      const apiTimeHorizon = timeHorizon === "yearly" ? "annual" : timeHorizon;
       await OrdersAPI.savePage2(orderId, {
-        time_horizon: timeHorizon,
+        time_horizon: apiTimeHorizon,
         stressTestingFile: files.stressTest,
         macroFile: files.macroeconomic,
       });
