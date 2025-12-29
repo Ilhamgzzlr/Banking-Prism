@@ -45,7 +45,7 @@ export interface Parameters {
 
   // LGD
   lgd_method: "constant" | "modelling_rr" | "modelling_lgd";
-  rr_value: string;
+  lgd_constant_value: string;
   rr_file: File | null;
   rr_macro_column: string;
   rr_modelling_approach: "auto" | "custom";
@@ -118,7 +118,7 @@ export const useParameters = (initialParams?: Partial<Parameters>, stressColumns
     }
 
     // Validate LGD method
-    if (parameters.lgd_method === "constant" && !parameters.rr_value) {
+    if (parameters.lgd_method === "constant" && !parameters.lgd_constant_value) {
       return false;
     }
 

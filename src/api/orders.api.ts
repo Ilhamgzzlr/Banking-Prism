@@ -8,7 +8,18 @@ export const OrdersAPI = {
         analysis_method: string[];
         economic_scenario: "dynamic" | "static";
     }) =>
-        http.post("/orders/", payload).then(res => res.data),
+        http.post("/orders", payload).then(res => res.data),
+
+    updatePage1: (
+        orderId: number,
+        payload: {
+            analysis_method: string[];
+            economic_scenario: "dynamic" | "static";
+        }
+    ) =>
+        http
+            .put(`/orders/${orderId}/page1`, payload)
+            .then(res => res.data),
 
     savePage2: (
         orderId: number,
@@ -24,7 +35,7 @@ export const OrdersAPI = {
         formData.append("macro_historical_data", payload.macroFile);
 
         return http
-            .put(`/orders/${orderId}/config/page2`, formData, {
+            .put(`/orders/${orderId}/page2`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then(res => res.data);
@@ -49,7 +60,7 @@ export const OrdersAPI = {
         }
 
         return http
-            .put(`/orders/${orderId}/config/page3`, formData, {
+            .put(`/orders/${orderId}/page3`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then(r => r.data);
@@ -65,7 +76,7 @@ export const OrdersAPI = {
         }
     ) =>
         http
-            .put(`/orders/${orderId}/config/page4`, payload)
+            .put(`/orders/${orderId}/page4`, payload)
             .then(res => res.data),
 
     savePage5: (
@@ -73,7 +84,7 @@ export const OrdersAPI = {
         payload: Page5Macro
     ) =>
         http
-            .put(`/orders/${orderId}/config/page5`, payload)
+            .put(`/orders/${orderId}/page5`, payload)
             .then(res => res.data),
 
 
@@ -87,7 +98,7 @@ export const OrdersAPI = {
             rwa_config: params.rwa_config,
             lgd_config: {
                 lgd_mode: params.lgd_config.lgd_mode,
-                rr_value: params.lgd_config.rr_value,
+                lgd_constant_value: params.lgd_config.lgd_constant_value,
                 related_macro_data: params.lgd_config.related_macro_data,
                 modelling_approach: params.lgd_config.modelling_approach
             }
@@ -103,21 +114,33 @@ export const OrdersAPI = {
             // Tambahkan file
             formData.append('historical_data_file', params.lgd_config.historical_data_file);
 
-            return http.put(`/orders/${orderId}/config/page6`, formData, {
+            return http.put(`/orders/${orderId}/page6`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
         } else {
             // Tidak ada file, kirim sebagai JSON biasa
-            return http.put(`/orders/${orderId}/config/page6`, payload, {
+            return http.put(`/orders/${orderId}/page6`, payload, {
                 headers: { 'Content-Type': 'application/json' },
             });
         }
     },
 
 
-    runCalculation: (orderId: number) =>
-        http.post(`/orders/${orderId}/run`).then(res => res.data),
+    // runCalculation: (orderId: number) =>
+    //     http.post(`/orders/${orderId}/run`).then(res => res.data),
 
+    // getResult: (orderId: number) =>
+    //     http.get(`/orders/${orderId}/result`),
+
+    // Updated: Start calculation and return task_id
+    startCalculation: (orderId: number) =>
+        http.post(`/orders/${orderId}/calculate`).then(res => res.data),
+
+    // New: Check task status
+    getTaskStatus: (taskId: string) =>
+        http.get(`/tasks/${taskId}`).then(res => res.data),
+
+    // Get final result
     getResult: (orderId: number) =>
-        http.get(`/orders/${orderId}/result`),
+        http.get(`/orders/${orderId}/result`).then(res => res.data),
 };

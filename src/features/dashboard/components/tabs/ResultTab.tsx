@@ -1,4 +1,4 @@
-import { Download, Maximize2, Minimize2 } from "lucide-react";
+import { Download, Maximize2, Minimize2, AlertCircle } from "lucide-react";
 import { ExpandableSection, ResultsTable, ScenarioLineChart, ResultLoading } from "../common";
 import { useResults } from "./hooks/useResults";
 import { TABLE_COLUMNS } from "./data/resultConfig";
@@ -15,13 +15,16 @@ import {
     AlertDialogCancel,
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
 
 export default function ResultTab() {
     const {
         tableData,
         chartData,
         isCalculating,
+        calculationProgress,
+        calculationError,
         expandedSections,
         chartSections,
         toggleSection,
@@ -32,7 +35,56 @@ export default function ResultTab() {
     } = useResults();
 
     if (isCalculating) {
-        return <ResultLoading />;
+        return (
+            <div className="space-y-4">
+                <ResultLoading />
+                <div className="flex flex-col items-center gap-4 p-8">
+                    <div className="w-full max-w-md space-y-2">
+                        <div className="flex justify-between text-sm text-gray-600">
+                            <span>Calculation Progress</span>
+                            <span>{calculationProgress}%</span>
+                        </div>
+                        <Progress value={calculationProgress} className="h-2" />
+                    </div>
+                    <p className="text-sm text-gray-500">
+                        Processing your stress testing calculation...
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (calculationError) {
+        return (
+            <div className="p-6">
+                <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Calculation Error</AlertTitle>
+                    <AlertDescription>
+                        {calculationError}
+                    </AlertDescription>
+                </Alert>
+                <div className="mt-4">
+                    <Button
+                        onClick={handleCreateNewTest}
+                        variant="outline"
+                    >
+                        Start New Test
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!tableData || tableData.length === 0) {
+        return (
+            <div className="flex items-center justify-center p-12">
+                <div className="text-center space-y-2">
+                    <p className="text-gray-500">No results available yet</p>
+                    <p className="text-sm text-gray-400">Complete all configuration steps and run the calculation</p>
+                </div>
+            </div>
+        );
     }
 
     const handleExportResults = () => {
@@ -74,6 +126,7 @@ export default function ResultTab() {
                     </button>
                 </div>
             </div>
+
             {/* Credit Simulation Results Table */}
             <ExpandableSection
                 title="Credit Simulation Results Table"
@@ -92,6 +145,7 @@ export default function ResultTab() {
             {/* Chart Sections */}
             {chartSections.map((chart) => {
                 const metric = METRIC_CONFIG[chart.id as keyof typeof METRIC_CONFIG];
+                const data = chartData[chart.id as keyof typeof chartData];
 
                 return (
                     <ExpandableSection
@@ -101,17 +155,20 @@ export default function ResultTab() {
                         onToggle={() => toggleSection(chart.id)}
                     >
                         <div className="p-4">
-                            <ScenarioLineChart
-                                data={chartData[chart.id as keyof typeof chartData]}
-                                valueFormatter={(v) =>
-                                    formatMetric(v, metric.type, metric.decimals)
-                                }
-                            />
+                            {data && data.length > 0 ? (
+                                <ScenarioLineChart
+                                    data={data}
+                                    valueFormatter={(v) =>
+                                        formatMetric(v, metric.type, metric.decimals)
+                                    }
+                                />
+                            ) : (
+                                <p className="text-sm text-gray-500">No chart data available</p>
+                            )}
                         </div>
                     </ExpandableSection>
                 );
             })}
-
 
             {/* Action Buttons */}
             <div className="flex justify-end items-center pt-4 border-t">
@@ -149,17 +206,6 @@ export default function ResultTab() {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
-
-                {/* <div className="flex gap-3">
-                    <button
-                        onClick={handleExportResults}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        type="button"
-                    >
-                        <Download className="w-4 h-4" />
-                        Export Full Report
-                    </button>
-                </div> */}
             </div>
         </div>
     );

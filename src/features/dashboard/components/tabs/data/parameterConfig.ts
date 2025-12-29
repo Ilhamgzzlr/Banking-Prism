@@ -80,7 +80,7 @@ export const getDefaultParameterValues = (stressColumns: string[] = []) => {
 
     // LGD
     lgd_method: "constant" as const,
-    rr_value: "",
+    lgd_constant_value: "",
     rr_file: null,
     rr_macro_column: "",
     rr_modelling_approach: "auto" as const,
@@ -127,7 +127,7 @@ export const getDefaultParameterValues = (stressColumns: string[] = []) => {
 
 //   // LGD
 //   lgd_method: "rr" as const,
-//   rr_value: "",
+//   lgd_constant_value: "",
 //   rr_file: null,
 //   rr_macro_column: "",
 //   rr_modelling_approach: "auto" as const,

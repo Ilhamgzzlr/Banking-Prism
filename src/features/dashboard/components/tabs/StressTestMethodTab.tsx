@@ -28,20 +28,35 @@ export default function StressTestMethodTab() {
     setSelectedMethod(methodValue);
   };
 
+  const isPayloadChanged = (oldData: any, newData: any) => {
+    return JSON.stringify(oldData) !== JSON.stringify(newData);
+  };
+
+
   const handleContinue = async () => {
     if (!selectedMethod || !selectedScenario) return;
 
     const payload = {
-      analysis_method: [selectedMethod], // backend expects array
+      analysis_method: [selectedMethod],
       economic_scenario: selectedScenario,
     };
 
     if (!orderId) {
       const order = await OrdersAPI.createOrder(payload);
       setOrderId(order.order_id);
+
+      savePageData(1, payload);
+      nextStep();
+      return;
     }
 
-    savePageData(1, payload);
+    const isChanged = isPayloadChanged(page1, payload);
+
+    if (isChanged) {
+      await OrdersAPI.updatePage1(orderId, payload);
+      savePageData(1, payload);
+    }
+
     nextStep();
   };
   const isAllInputFilled = selectedMethod !== null && selectedScenario !== null;

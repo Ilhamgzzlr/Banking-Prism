@@ -16,7 +16,7 @@ export default function StressModelTabs() {
 
   const {
     currentStep,
-    // setStep,
+    setStep,
   } = useOrderStore();
 
   return (
@@ -40,7 +40,7 @@ export default function StressModelTabs() {
         {steps.map((step, index) => (
           <div
             key={step}
-            // onClick={() => setStep(index)}
+            onClick={() => setStep(index)}
             className={`px-4 py-2 rounded-md text-sm font-medium
               ${index === currentStep
                 ? "bg-purple-600 text-white"

@@ -101,9 +101,9 @@ export default function InputParameterTab() {
     ) as "Constant" | "Modelling RR" | "Modelling LGD",
 
 
-    rr_value:
+    lgd_constant_value:
       parameters.lgd_method === "constant"
-        ? Number(parameters.rr_value)
+        ? Number(parameters.lgd_constant_value)
         : undefined,
 
     historical_data_file:
@@ -410,8 +410,8 @@ export default function InputParameterTab() {
               label={method.label}
               isSelected={parameters.lgd_method === method.value}
               onSelect={() => updateParameter("lgd_method", method.value)}
-              rrValue={parameters.rr_value}
-              onRrValueChange={(value) => updateParameter("rr_value", value)}
+              lgdValue={parameters.lgd_constant_value}
+              onLGDValueChange={(value) => updateParameter("lgd_constant_value", value)}
               rrFile={parameters.rr_file}
               onRrFileChange={(file) => handleFileChange("rr_file", file)}
               rrMacroColumn={parameters.rr_macro_column}

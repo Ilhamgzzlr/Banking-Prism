@@ -60,6 +60,7 @@ export default function MacroSelectionTab() {
       macro_factors: factors.map(f => ({
         column_name: f.id,
         is_macro_factor: f.selected,
+        use_macro: f.selected,
         related_historical_macros: f.selected
           ? f.selectedSubFactors ?? []
           : null,

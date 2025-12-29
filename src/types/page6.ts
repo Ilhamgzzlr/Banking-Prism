@@ -28,7 +28,7 @@ export interface Page6Params {
 
   lgd_config: {
     lgd_mode: "Constant" | "Modelling RR" | "Modelling LGD";
-    rr_value?: number;
+    lgd_constant_value?: number;
     historical_data_file?: File | null;
     related_macro_data?: string[];
     modelling_approach?: "auto" | "custom";
@@ -61,7 +61,7 @@ export interface StressTestParameters {
 
   // LGD parameters
   lgd_method: "constant" | "modelling_rr" | "modelling_lgd";
-  rr_value: string;
+  lgd_constant_value: string;
   rr_file: File | null;
   rr_macro_column: string;
   rr_modelling_approach: "auto" | "custom";

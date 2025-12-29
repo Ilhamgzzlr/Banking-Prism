@@ -6,7 +6,7 @@ const getBaseURL = () => {
     return import.meta.env.VITE_API_URL;
   }
   // Di development, gunakan proxy
-  return "/api";
+  return "/api/v1";
 };
 
 export const http = axios.create({

@@ -6,9 +6,9 @@ interface LGDOptionProps {
   isSelected: boolean;
   onSelect: () => void;
 
-  // RR specific
-  rrValue?: string;
-  onRrValueChange?: (value: string) => void;
+  // LGD specific
+  lgdValue?: string;
+  onLGDValueChange?: (value: string) => void;
 
   // Modelling RR specific
   rrFile?: File | null;
@@ -38,8 +38,8 @@ const LGDOption = ({
   label,
   isSelected,
   onSelect,
-  rrValue,
-  onRrValueChange,
+  lgdValue,
+  onLGDValueChange,
   rrFile,
   onRrFileChange,
   rrMacroColumn,
@@ -70,13 +70,13 @@ const LGDOption = ({
           </div>
 
           {/* RR Value Input */}
-          {method === "constant" && isSelected && onRrValueChange && (
+          {method === "constant" && isSelected && onLGDValueChange && (
             <div className="mt-3">
               <ParameterInput
                 label="Loss Given Default Value"
-                name="rr_value"
-                value={rrValue || ""}
-                onChange={onRrValueChange}
+                name="lgd_constant_value"
+                value={lgdValue || ""}
+                onChange={onLGDValueChange}
                 placeholder="e.g., 0.1"
                 type="number"
               />

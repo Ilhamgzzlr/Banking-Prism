@@ -77,7 +77,8 @@ export const useOrderStore = create<OrderState>()(
                     pageResult: { rawResult: result }
                 })),
 
-            reset: () =>
+            reset: () => {
+                localStorage.removeItem("stress-test-order");
                 set({
                     orderId: null,
                     currentStep: 0,
@@ -90,7 +91,8 @@ export const useOrderStore = create<OrderState>()(
                     page5: undefined,
                     page6: undefined,
                     pageResult: undefined,
-                }),
+                });
+            },
         }),
         {
             name: "stress-test-order", // localStorage key

@@ -1,18 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { OrdersAPI } from "@/api/orders.api";
 import { useOrderStore } from "@/stores/useOrderStore";
-import { mapResultTable } from "@features/dashboard/utils/mapResultTable";
+import { mapResultTable, prepareChartData } from "@features/dashboard/utils/mapResultTable";
 
 export interface TableData {
   scenario: string;
   date: string;
-  ead_total: number;
-  npl_total: number;
-  npl_gross_pct: number;
-  npl_net_pct: number;
-  ckpn: number;
+  el: number;
   equity: number;
   car: number;
+  npl_gross: number;
+  npl_gross_ratio: number;
+  npl_net: number;
+  npl_net_ratio: number;
+  default_flow: number;
+  cure_flow: number;
+  writeoff_flow: number;
 }
 
 export interface ChartSection {
@@ -34,6 +37,8 @@ export const useResults = () => {
 
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [calculationProgress, setCalculationProgress] = useState(0);
+  const [calculationError, setCalculationError] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     table: true,
     nplGross: false,
@@ -42,58 +47,130 @@ export const useResults = () => {
     summary: false
   });
 
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const taskIdRef = useRef<string | null>(null);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Poll task status
+  const pollTaskStatus = async (taskId: string) => {
+    try {
+      const statusData = await OrdersAPI.getTaskStatus(taskId);
+      
+      setCalculationProgress(statusData.progress || 0);
+
+      if (statusData.status === "COMPLETED") {
+        // Task completed, fetch result
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        
+        await fetchResultOnly();
+        setIsCalculating(false);
+        setCalculationStatus("DONE");
+        taskIdRef.current = null;
+      } else if (statusData.status === "FAILED") {
+        // Task failed
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        
+        setCalculationError(statusData.error_message || "Calculation failed");
+        setIsCalculating(false);
+        setCalculationStatus("NOT_STARTED");
+        taskIdRef.current = null;
+      }
+      // For PROCESSING or PENDING, continue polling
+    } catch (err) {
+      console.error("Error polling task status:", err);
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+      setCalculationError("Failed to check calculation status");
+      setIsCalculating(false);
+      setCalculationStatus("NOT_STARTED");
+      taskIdRef.current = null;
+    }
+  };
+
+  const fetchResultOnly = async () => {
+    if (!orderId) return;
+    
+    try {
+      const res = await OrdersAPI.getResult(orderId);
+      saveResult(res);
+      // Pass entire response data to mapResultTable
+      setTableData(mapResultTable(res));
+      setCalculationError(null);
+    } catch (err) {
+      console.error("Failed to fetch result:", err);
+      setCalculationError("Failed to fetch calculation results");
+    }
+  };
+
+  const runAndFetch = async () => {
+    if (!orderId) return;
+    
+    try {
+      setIsCalculating(true);
+      setCalculationProgress(0);
+      setCalculationError(null);
+      setCalculationStatus("RUNNING");
+
+      // Start calculation
+      const startData = await OrdersAPI.startCalculation(orderId);
+      taskIdRef.current = startData.task_id;
+
+      // Start polling for task status
+      pollingIntervalRef.current = setInterval(() => {
+        if (taskIdRef.current) {
+          pollTaskStatus(taskIdRef.current);
+        }
+      }, 2000); // Poll every 2 seconds
+
+    } catch (err) {
+      console.error("Calculation failed to start", err);
+      setCalculationError("Failed to start calculation");
+      setCalculationStatus("NOT_STARTED");
+      setIsCalculating(false);
+    }
+  };
+
   useEffect(() => {
     if (!orderId) return;
 
-    // already in store → reuse
+    // If result already in store, use it
     if (pageResult?.rawResult) {
-      setTableData(
-        mapResultTable(pageResult.rawResult.results_table_data)
-      );
+      setTableData(mapResultTable(pageResult.rawResult));
       return;
     }
 
-    const fetchResultOnly = async () => {
-      const res = await OrdersAPI.getResult(orderId);
-      saveResult(res.data);
-      setTableData(
-        mapResultTable(res.data.results_table_data)
-      );
-    };
-
-    const runAndFetch = async () => {
-      try {
-        setIsCalculating(true);
-        setCalculationStatus("RUNNING");
-
-        await OrdersAPI.runCalculation(orderId);
-        await fetchResultOnly();
-      } catch (err) {
-        console.error("Calculation failed", err);
-        setCalculationStatus("NOT_STARTED");
-      } finally {
-        setIsCalculating(false);
-      }
-    };
-
-    // 2️⃣ logic utama
+    // Main logic based on calculation status
     if (calculationStatus === "DONE") {
       fetchResultOnly();
     } else if (calculationStatus === "NOT_STARTED") {
       runAndFetch();
-    } else if (calculationStatus === "RUNNING") {
-      // optional: polling status backend
+    } else if (calculationStatus === "RUNNING" && !isCalculating) {
+      // Resume if interrupted
       setIsCalculating(true);
     }
-  }, [orderId]);
+  }, [orderId, calculationStatus]);
 
-  const chartData = {
-    nplGross: pageResult?.rawResult?.npl_gross_series || [],
-    nplNet: pageResult?.rawResult?.npl_net_series || [],
-    car: pageResult?.rawResult?.car_series || [],
+  const chartData = pageResult?.rawResult ? prepareChartData(pageResult.rawResult) : {
+    nplGross: [],
+    nplNet: [],
+    car: [],
   };
-
-
 
   const chartSections: ChartSection[] = [
     {
@@ -140,13 +217,42 @@ export const useResults = () => {
   };
 
   const downloadTableCSV = () => {
-    const headers = Object.keys(tableData[0]).join(',');
-    const rows = tableData.map(row =>
-      Object.values(row).map(val =>
-        typeof val === 'number' ? val.toString() : `"${val}"`
-      ).join(',')
-    );
-    const csvContent = [headers, ...rows].join('\n');
+    if (tableData.length === 0) return;
+    
+    // Define headers in order
+    const headers = [
+      'Scenario',
+      'Tanggal',
+      'EL',
+      'Equity',
+      'CAR',
+      'NPL_GROSS',
+      'NPL_GROSS_RATIO',
+      'NPL_NET',
+      'NPL_NET_RATIO',
+      'DEFAULT_FLOW',
+      'CURE_FLOW',
+      'WRITEOFF_FLOW'
+    ];
+    
+    const rows = tableData.map(row => [
+      row.scenario,
+      row.date,
+      row.el,
+      row.equity,
+      row.car,
+      row.npl_gross,
+      row.npl_gross_ratio,
+      row.npl_net,
+      row.npl_net_ratio,
+      row.default_flow,
+      row.cure_flow,
+      row.writeoff_flow
+    ].map(val => 
+      typeof val === 'number' ? val.toString() : `"${val}"`
+    ).join(','));
+    
+    const csvContent = [headers.join(','), ...rows].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -158,13 +264,18 @@ export const useResults = () => {
   };
 
   const handleCreateNewTest = () => {
-    // Konfirmasi dengan user
-    // if (window.confirm("Are you sure you want to create a new test? All current data will be reset.")) {
-    // Reset store
+    // Clear polling if active
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    
+    taskIdRef.current = null;
     resetStore();
-
-    // Reset local state
     setTableData([]);
+    setCalculationProgress(0);
+    setIsCalculating(false);
+    setCalculationError(null);
     setExpandedSections({
       table: true,
       nplGross: false,
@@ -172,14 +283,14 @@ export const useResults = () => {
       car: false,
       summary: false
     });
-    // }
   };
-
 
   return {
     tableData,
     chartData,
     isCalculating,
+    calculationProgress,
+    calculationError,
     expandedSections,
     chartSections,
     toggleSection,
