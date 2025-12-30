@@ -43,11 +43,17 @@ export default function SelectModelDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Select LGD Model</DialogTitle>
+        <DialogHeader className="mt-4">
+          <Section
+            title="Select LGD Model"
+            required
+            isDownloadTemplate
+            downloadName="LGD Model Comparison"
+            templatePath="/templates/LGD_Model_Comparison.xlsx"
+            templateFileName="LGD_Model_Comparison.xlsx"
+          >
+          </Section>
         </DialogHeader>
-
-        <Section title="Select LGD Model" required />
 
         <div className="space-y-3 max-h-[400px] overflow-y-auto">
           {models.map((model) => (
@@ -72,6 +78,7 @@ export default function SelectModelDialog({
           </Button>
 
           <Button
+          className="bg-purple-500"
             onClick={handleConfirm}
             disabled={!isModelSelected()}
           >

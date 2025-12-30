@@ -2,16 +2,20 @@ import type { Model } from "../hooks/useModelSelection";
 
 export const DEFAULT_MODELS: Model[] = [
     {
-        id: "arima_1_1_0",
-        name: "ARIMA (1,1,0)",
+        id: "A",
+        name: "Model A",
     },
     {
-        id: "arima_1_0_1",
-        name: "ARIMA (1,0,1)",
+        id: "B",
+        name: "Model B",
     },
     {
-        id: "arima_0_0_1",
-        name: "ARIMA (0,0,1)",
+        id: "C",
+        name: "Model C",
+    },
+    {
+        id: "D",
+        name: "Model D",
     },
 ];
 

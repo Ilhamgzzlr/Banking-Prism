@@ -115,8 +115,11 @@ export default function InputScenarioTab() {
     try {
       if (scenarioType === "BI Scenario" && regulatoryFile) {
         await OrdersAPI.savePage3(orderId, {
-          scenario_option: "BI Scenario",
-          scenario_upload: regulatoryFile,
+          // scenario_option: "BI Scenario",
+          // scenario_upload: regulatoryFile,
+          // sementara custom dulu
+          scenario_option: "Custom Scenario Input",
+          scenario_upload: customFile || regulatoryFile,
         });
 
         savePageData(3, { scenario_option: "BI Scenario", uploaded: true, sheet_names: sheetNames });

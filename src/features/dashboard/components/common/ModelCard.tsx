@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+// import { Download } from "lucide-react";
 
 interface ModelCardProps {
   id: string;
@@ -20,7 +20,7 @@ const ModelCard = ({
   description,
   isSelected,
   onSelect,
-  onDownload,
+  // onDownload,
   stats
 }: ModelCardProps) => {
   return (
@@ -37,7 +37,7 @@ const ModelCard = ({
           name="lgd_model"
           checked={isSelected}
           onChange={() => onSelect(id)}
-          className="w-4 h-4 text-blue-600"
+          className="w-4 h-4 accent-purple-600 cursor-pointer"
         />
         <div className="flex-1">
           <div className="flex items-center gap-2">
@@ -75,14 +75,14 @@ const ModelCard = ({
         </div>
       </label>
 
-      <button
+      {/* <button
         onClick={() => onDownload(id)}
         className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors ml-2"
         title="Download model details"
         type="button"
       >
         <Download className="w-5 h-5" />
-      </button>
+      </button> */}
     </div>
   );
 };

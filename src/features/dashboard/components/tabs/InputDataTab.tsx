@@ -41,7 +41,8 @@ export default function InputDataTab() {
 
     try {
       // sementara mapping manual time_horizon
-      const apiTimeHorizon = timeHorizon === "yearly" ? "annual" : timeHorizon;
+      // const apiTimeHorizon = timeHorizon === "yearly" ? "annual" : timeHorizon;
+      const apiTimeHorizon = "quarterly"; // default quarterly dulu
       await OrdersAPI.savePage2(orderId, {
         time_horizon: apiTimeHorizon,
         stressTestingFile: files.stressTest,

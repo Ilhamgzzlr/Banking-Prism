@@ -118,17 +118,18 @@ export const useParameters = (initialParams?: Partial<Parameters>, stressColumns
     }
 
     // Validate LGD method
-    if (parameters.lgd_method === "constant" && !parameters.lgd_constant_value) {
-      return false;
-    }
+    // sementara di comment dulu
+    // if (parameters.lgd_method === "constant" && !parameters.lgd_constant_value) {
+    //   return false;
+    // }
 
-    if (parameters.lgd_method === "rr_model" && !parameters.rr_file) {
-      return false;
-    }
+    // if (parameters.lgd_method === "rr_model" && !parameters.rr_file) {
+    //   return false;
+    // }
 
-    if (parameters.lgd_method === "lgd_model" && !parameters.lgd_file) {
-      return false;
-    }
+    // if (parameters.lgd_method === "lgd_model" && !parameters.lgd_file) {
+    //   return false;
+    // }
 
     return true;
   };

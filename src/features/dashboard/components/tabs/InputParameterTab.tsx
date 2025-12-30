@@ -47,7 +47,9 @@ export default function InputParameterTab() {
 
   const initParams = {
     TRAIN_RATIO: Number(parameters.train_ratio),
-    RESID_MODE_PD: parameters.resid_mode_pd as "Normal" | "Bootstrapping" | "Residual",
+    // RESID_MODE_PD: parameters.resid_mode_pd as "Normal" | "Bootstrapping" | "Residual",
+    // sementara normal dulu
+    RESID_MODE_PD: "Normal" as "Normal",
     WRITE_OFF_VALUE: Number(parameters.write_off_value),
     N_PATHS_PD: Number(parameters.n_paths_pd),
     CURE_RATE_VALUE: Number(parameters.cure_rate_value),
@@ -64,13 +66,16 @@ export default function InputParameterTab() {
   }));
 
   const eadConfig = {
-    ead_growth_assumption: (
-      parameters.ead_growth_assumption === "constant"
-        ? "Constant"
-        : parameters.ead_growth_assumption === "manual"
-          ? "Manual"
-          : "GDP Growth"
-    ) as "Constant" | "Manual" | "GDP Growth",
+    // ead_growth_assumption: (
+    //   parameters.ead_growth_assumption === "constant"
+    //     ? "Constant"
+    //     : parameters.ead_growth_assumption === "manual"
+    //       ? "Manual"
+    //       : "GDP Growth"
+    // ) as "Constant" | "Manual" | "GDP Growth",
+
+    // sementara constant dulu
+    ead_growth_assumption: "Constant" as "Constant",
 
     ead_values: eadValues,
 
@@ -92,19 +97,24 @@ export default function InputParameterTab() {
   };
 
   const lgdConfig = {
-    lgd_mode: (
-      parameters.lgd_method === "constant"
-        ? "Constant"
-        : parameters.lgd_method === "rr_model"
-          ? "RR Model"
-          : "LGD Model"
-    ) as "Constant" | "RR Model" | "LGD Model",
+    // lgd_mode: (
+    //   parameters.lgd_method === "constant"
+    //     ? "Constant"
+    //     : parameters.lgd_method === "rr_model"
+    //       ? "RR Model"
+    //       : "LGD Model"
+    // ) as "Constant" | "RR Model" | "LGD Model",
+
+    // sementara constant dulu
+    lgd_mode: "Constant" as "Constant",
 
 
-    lgd_constant_value:
-      parameters.lgd_method === "constant"
-        ? Number(parameters.lgd_constant_value)
-        : undefined,
+    // lgd_constant_value:
+    //   parameters.lgd_method === "constant"
+    //     ? Number(parameters.lgd_constant_value) || 0.1
+    //     : undefined,
+
+    lgd_constant_value: 0.1,
 
     historical_data_file:
       parameters.lgd_method !== "constant"

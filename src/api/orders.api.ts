@@ -100,7 +100,7 @@ export const OrdersAPI = {
                 lgd_mode: params.lgd_config.lgd_mode,
                 lgd_constant_value: params.lgd_config.lgd_constant_value,
                 related_macro_data: params.lgd_config.related_macro_data,
-                modelling_approach: params.lgd_config.modelling_approach
+                modelling_approach: "Auto" // sementara Auto dulu
             }
         };
 

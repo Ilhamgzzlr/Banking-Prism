@@ -10,6 +10,8 @@ interface SectionProps {
   templateFileName?: string;
   children?: React.ReactNode;
   required?: boolean;
+  downloadName?: string;
+  className?: string;
 }
 
 const Section = ({
@@ -18,7 +20,9 @@ const Section = ({
   required = false,
   isDownloadTemplate = false,
   templatePath,
-  templateFileName
+  templateFileName,
+  downloadName,
+  className,
 }: SectionProps) => {
 
   const handleDownload = () => {
@@ -30,7 +34,7 @@ const Section = ({
     try {
       downloadTemplate(templatePath, templateFileName);
 
-      toast.success("Template downloaded", {
+      toast.success(downloadName ? `${downloadName} downloaded` : "Template downloaded", {
         description: templateFileName,
       });
     } catch (error) {
@@ -42,7 +46,7 @@ const Section = ({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold mb-3">
+        <h3 className={`font-semibold mb-3 ${className}`}>
           {title} {required && <span className="text-red-500">*</span>}
         </h3>
         {isDownloadTemplate && templatePath && (
@@ -51,10 +55,10 @@ const Section = ({
             variant="outline"
             size="default"
             onClick={handleDownload}
-            className="mb-3"
+            className={`mb-3 ${className}`}
           >
             <Download className="w-4 h-4" />
-            Download Template
+            {downloadName ? `${downloadName}` : "Download Template"}
           </Button>
         )}
       </div>

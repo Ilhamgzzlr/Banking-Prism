@@ -1,5 +1,5 @@
 import { Download, Maximize2, Minimize2, AlertCircle } from "lucide-react";
-import { ExpandableSection, ResultsTable, ScenarioLineChart, ResultLoading } from "../common";
+import { ExpandableSection, ResultsTable, ScenarioLineChart, ResultLoading, Section } from "../common";
 import { useResults } from "./hooks/useResults";
 import { TABLE_COLUMNS } from "./data/resultConfig";
 import { formatMetric, METRIC_CONFIG } from "@features/dashboard/utils/formatMetric";
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { downloadTemplate } from "@features/dashboard/utils/downloadTemplate";
+import { toast } from "sonner";
 
 export default function ResultTab() {
     const {
@@ -88,16 +90,38 @@ export default function ResultTab() {
     }
 
     const handleExportResults = () => {
-        downloadTableCSV();
-        alert("Results exported to CSV successfully!");
+        // const handleDownload = () => {
+
+        try {
+            downloadTemplate("/templates/credit_results.xlsx", "credit_results.xlsx");
+
+            toast.success("Results downloaded", {
+                description: "credit_results.xlsx",
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to download template");
+        }
+        // };
     };
 
     return (
         <div className="space-y-2">
             {/* Header with Actions */}
-            <div className="flex justify-between items-center mb-4">
-                <div>
+            <div className="flex justify-between items-center mb-4 gap-3">
+                {/* <div>
                     <h2 className="text-lg font-semibold text-gray-900">Stress Testing Results</h2>
+                </div> */}
+                <div className="flex-1">
+                    <Section
+                        title="Diagnostics"
+                        required
+                        isDownloadTemplate
+                        downloadName="Diagnostics"
+                        templatePath="/templates/npl_lgd_results.xlsx"
+                        templateFileName="npl_lgd_results.xlsx"
+                        className="mb-0"
+                    />
                 </div>
                 <div className="flex gap-3">
                     <button
@@ -122,8 +146,9 @@ export default function ResultTab() {
                         type="button"
                     >
                         <Download className="w-4 h-4" />
-                        Export CSV
+                        Export
                     </button>
+
                 </div>
             </div>
 
