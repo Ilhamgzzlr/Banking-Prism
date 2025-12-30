@@ -32,7 +32,7 @@ export default function ResultTab() {
         toggleSection,
         expandAll,
         collapseAll,
-        downloadTableCSV,
+        // downloadTableCSV,
         handleCreateNewTest
     } = useResults();
 
